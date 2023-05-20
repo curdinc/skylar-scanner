@@ -24,7 +24,7 @@ export const evmTransactionRouter = createTRPCRouter({
   getUserOp: publicProcedure
     .meta({ openapi: { method: "GET", path: "/userOpInfo" } })
     .input(z.object({ txn: z.string(), chainId: EvmChainIdSchema }))
-    .output(userOpSchema)
+    .output(z.any())
     .query(async ({ input }) => {
       const searchQuery = input.txn;
       const chainId = input.chainId;
