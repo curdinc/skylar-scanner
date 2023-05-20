@@ -15,8 +15,8 @@ import {
 import { getViemClient } from "../lib/evmTransaction/client";
 import {
   ENTRYPOINT_CONTRACT_ADDRESS,
+  HANDLE_OPS_INPUT,
   USER_OPERATION_EVENT,
-  USER_OPERATION_INPUT,
 } from "../lib/evmTransaction/constants";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
@@ -83,14 +83,9 @@ export const evmTransactionRouter = createTRPCRouter({
 
       const txnView = await client.getTransaction({ hash: parentHash });
 
-      const inp = txnView.input;
-
       const parsedInp: `0x${string}` = `0x${txnView.input.slice(10)}`;
 
-      const parentTxnInput = decodeAbiParameters(
-        USER_OPERATION_INPUT,
-        parsedInp,
-      );
+      const parentTxnInput = decodeAbiParameters(HANDLE_OPS_INPUT, parsedInp);
 
       if (parentTxnInput.length !== 2) {
         throw new TRPCError({
