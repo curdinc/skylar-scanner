@@ -86,3 +86,39 @@ export const userOpLogSchema = z.object({
   }),
   eventName: z.string(),
 });
+
+export type userOpLogType = z.infer<typeof userOpLogSchema>;
+
+export const TokenSchema = z.object({
+  type: z.literal("erc20"),
+  contract: EthAddressSchema,
+  name: z.string(),
+  decimals: z.number(),
+  from: EthAddressSchema,
+  to: EthAddressSchema,
+  amount: z.bigint(),
+});
+export type TokenType = z.infer<typeof TokenSchema>;
+
+export const NftSchema = z.object({
+  type: z.union([
+    z.literal("erc721a"),
+    z.literal("erc721"),
+    z.literal("erc1155"),
+  ]),
+  contract: EthAddressSchema,
+  name: z.string(),
+  from: EthAddressSchema,
+  to: EthAddressSchema,
+  amount: z.bigint(),
+  tokenId: z.bigint(),
+  imageUrl: z.string(),
+});
+export type NftType = z.infer<typeof NftSchema>;
+
+export const AssetLogsSchema = z.union([
+  TokenSchema.array(),
+  NftSchema.array(),
+]);
+
+export type AssetLogsType = z.infer<typeof AssetLogsSchema>;
