@@ -1,3 +1,4 @@
+import { type Transaction } from "viem";
 import { z } from "zod";
 
 export const EthAddressSchema = z.custom<`0x${string}`>((val) => {
@@ -31,6 +32,23 @@ export const EvmChainIdSchema = z.union([
   z.literal("80001"),
 ]);
 export type EvmChainIdType = z.infer<typeof EvmChainIdSchema>;
+
+export const EvmTransactionClientQuerySchema = z.object({
+  txnHash: EthHashSchema.array().length(1),
+  chainId: EvmChainIdSchema,
+});
+export type EvmTransactionClientQueryType = z.infer<
+  typeof EvmTransactionClientQuerySchema
+>;
+
+export const EvmTransactionQuerySchema = z.object({
+  txnHash: EthHashSchema,
+  chainId: EvmChainIdSchema,
+});
+export type EvmTransactionQueryType = z.infer<typeof EvmTransactionQuerySchema>;
+
+export type EvmTransaction = Transaction;
+
 export const userOpSchema = z.object({
   sender: EthAddressSchema,
   nonce: z.bigint(),
@@ -45,6 +63,7 @@ export const userOpSchema = z.object({
   signature: BytesSchema,
   beneficiary: EthAddressSchema,
 });
+export type userOpType = z.infer<typeof userOpSchema>;
 
 export const userOpLogSchema = z.object({
   address: EthAddressSchema,
@@ -67,3 +86,39 @@ export const userOpLogSchema = z.object({
   }),
   eventName: z.string(),
 });
+
+export type userOpLogType = z.infer<typeof userOpLogSchema>;
+
+export const TokenSchema = z.object({
+  type: z.literal("erc20"),
+  contract: EthAddressSchema,
+  name: z.string(),
+  decimals: z.number(),
+  from: EthAddressSchema,
+  to: EthAddressSchema,
+  amount: z.bigint(),
+});
+export type TokenType = z.infer<typeof TokenSchema>;
+
+export const NftSchema = z.object({
+  type: z.union([
+    z.literal("erc721a"),
+    z.literal("erc721"),
+    z.literal("erc1155"),
+  ]),
+  contract: EthAddressSchema,
+  name: z.string(),
+  from: EthAddressSchema,
+  to: EthAddressSchema,
+  amount: z.bigint(),
+  tokenId: z.bigint(),
+  imageUrl: z.string(),
+});
+export type NftType = z.infer<typeof NftSchema>;
+
+export const AssetLogsSchema = z.union([
+  TokenSchema.array(),
+  NftSchema.array(),
+]);
+
+export type AssetLogsType = z.infer<typeof AssetLogsSchema>;

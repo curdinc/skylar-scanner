@@ -11,7 +11,7 @@ import {
 
 import { getViemClient } from "./client";
 import {
-  ENTRYPOINT_CONTRACT_ADDRESS,
+  ENTRY_POINT_CONTRACT_ADDRESSES,
   HANDLE_OPS_INPUT,
   SIGNATURES,
   USER_OPERATION_EVENT,
@@ -20,21 +20,21 @@ import {
 // params should already should be validated before called so we just crash
 export const getUserOpLogFromOpHash = async (
   opHash: string,
-  chainId: string,
+  chainId: EvmChainIdType,
 ) => {
   const client = getViemClient(chainId);
-
+  const entryPointContract = ENTRY_POINT_CONTRACT_ADDRESSES[chainId][0];
   const filter = await client.createEventFilter({
-    address: ENTRYPOINT_CONTRACT_ADDRESS,
+    address: entryPointContract,
     event: USER_OPERATION_EVENT,
     args: [opHash],
-    fromBlock: 17296100n,
+    fromBlock: 0n,
   });
 
   const logs = await client.getFilterLogs({ filter });
 
   if (logs.length !== 1) {
-    console.error("Hash not found or collides");
+    console.error("Hash not found or collides", logs);
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
       message: "invalid length of transactions",

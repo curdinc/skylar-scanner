@@ -1,5 +1,5 @@
 import React from "react";
-import { useRouter } from "next/router";
+import router from "next/router";
 import { Box, Flex, useColorMode, useColorModeValue } from "@chakra-ui/react";
 import {
   KBarAnimator,
@@ -16,16 +16,20 @@ import { Search } from "lucide-react";
 
 export function SearchBar() {
   const bgcolor = useColorModeValue("gray.200", "gray.700");
-  const { search } = useKBar((state) => ({
+  const { search, query, visualState } = useKBar((state) => ({
     search: state.searchQuery,
+    visualState: state.visualState,
   }));
 
-  const router = useRouter();
-
   const onSubmit = () => {
-    router.push(`/parse/${search}`).catch((e) => {
-      console.log(`Error routing to parse/${search}: `, e);
-    });
+    if (search.startsWith("0x")) {
+      if (visualState === "showing") {
+        query.toggle();
+      }
+      router.push(`/parse/${search}`).catch((e) => {
+        console.log(`Error routing to parse/${search}: `, e);
+      });
+    }
   };
 
   return (

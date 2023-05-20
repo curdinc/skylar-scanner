@@ -15,7 +15,7 @@ export function DataTable({
   data,
 }: {
   headers: string[];
-  data: Array<{}>;
+  data: Array<any>;
 }) {
   return (
     <TableContainer>
@@ -24,7 +24,7 @@ export function DataTable({
         <Thead>
           <Tr>
             {headers.map((header) => (
-              <Th>{header}</Th>
+              <Th key={header}>{header}</Th>
             ))}
           </Tr>
         </Thead>
@@ -32,7 +32,7 @@ export function DataTable({
           {data.map((item, index) => (
             <Tr key={index}>
               {Object.keys(item).map((key) => (
-                <Td>{item[key]}</Td>
+                <Td key={key}>{item[key]}</Td>
               ))}
             </Tr>
           ))}
