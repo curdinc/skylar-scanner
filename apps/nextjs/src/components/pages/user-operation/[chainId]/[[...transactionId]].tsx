@@ -8,10 +8,13 @@ export const UserOpPage = () => {
   const {
     query: { transactionId, chainId },
   } = useRouter();
-  const { data } = api.evmTransaction.userOpInfo.useQuery({
-    chainId: "1",
-    txn: "0xec7e449e255bf5d722a9a6c742270d52876de0f3a7e024e955b53bdb331865dd",
-  });
+  const { data, refetch } = api.evmTransaction.userOpInfo.useQuery(
+    {
+      chainId: "1",
+      txn: "0xec7e449e255bf5d722a9a6c742270d52876de0f3a7e024e955b53bdb331865dd",
+    },
+    { enabled: false },
+  );
   console.log("chainId", chainId);
   console.log("transactionId", transactionId);
   console.log("data", data);
