@@ -10,7 +10,7 @@ import {
 import {
   userOpLogSchema,
   userOpSchema,
-} from "@skylarScan/schema/src/evmTransaction.js";
+} from "@skylarScan/schema/src/evmTransaction";
 
 import { getViemClient } from "../lib/evmTransaction/client";
 import {
