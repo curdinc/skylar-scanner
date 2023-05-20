@@ -7,7 +7,7 @@ import { parseEvmInput } from "../lib/evmTransaction/parseEvmInput";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const evmTransactionRouter = createTRPCRouter({
-  getUserOp: publicProcedure
+  userOpInfo: publicProcedure
     .meta({ openapi: { method: "GET", path: "/userOpInfo" } })
     .input(z.object({ txn: z.string(), chainId: EvmChainIdSchema }))
     .output(z.any())
