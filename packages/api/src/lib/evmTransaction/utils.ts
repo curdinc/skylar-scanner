@@ -1,12 +1,23 @@
 import { TRPCError } from "@trpc/server";
+import { decodeAbiParameters } from "viem";
 
-import { userOpLogSchema } from "@skylarScan/schema/src/evmTransaction";
+import {
+  userOpLogSchema,
+  userOpSchema,
+} from "@skylarScan/schema/src/evmTransaction";
 
 import { getViemClient } from "./client";
-import { ENTRYPOINT_CONTRACT_ADDRESS, USER_OPERATION_EVENT } from "./constants";
+import {
+  ENTRYPOINT_CONTRACT_ADDRESS,
+  HANDLE_OPS_INPUT,
+  USER_OPERATION_EVENT,
+} from "./constants";
 
 // params should already should be validated before called so we just crash
-export const getUserOpFromHash = async (opHash: string, chainId: string) => {
+export const getUserOpLogFromOpHash = async (
+  opHash: string,
+  chainId: string,
+) => {
   const client = getViemClient(chainId);
 
   const filter = await client.createEventFilter({
@@ -50,6 +61,55 @@ export const getUserOpFromHash = async (opHash: string, chainId: string) => {
 
   return parsedUserOpEventLog;
 };
+
+export const getUserOpInfoFromParentHash = async (
+  parentHash: string,
+  chainId: string,
+  sender: string,
+  nonce: bigint,
+  moreInfo: boolean,
+) => {
+  // get the viem client
+  const client = getViemClient(chainId);
+
+  // get the tranaction details
+  const txnView = await client.getTransaction({ hash: parentHash });
+
+  const parsedInp: `0x${string}` = `0x${txnView.input.slice(10)}`;
+
+  const parentTxnInput = decodeAbiParameters(HANDLE_OPS_INPUT, parsedInp);
+
+  if (parentTxnInput.length !== 2) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Unknown Error Occured",
+      cause: "txnInput decoding error",
+    });
+  }
+
+  // get params
+  const uops = parentTxnInput[0];
+  const beneficiary = parentTxnInput[1];
+
+  // find targetUop with unique compound key (sender, nonce)
+  const uop = uops.find((uop) => uop.sender === sender && uop.nonce === nonce);
+
+  const targetUop = { beneficiary: beneficiary, ...uop };
+
+  const zodParsedTargetUop = userOpSchema.safeParse(targetUop);
+
+  if (!zodParsedTargetUop.success) {
+    console.error(targetUop);
+    console.error(zodParsedTargetUop.error.format());
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Error occured parsing txn Inputs",
+      cause: zodParsedTargetUop.error,
+    });
+  }
+  return zodParsedTargetUop.data;
+};
+
 export function isEoaAddressEqual(a: string, b: string) {
   return a.toLowerCase() === b.toLowerCase();
 }

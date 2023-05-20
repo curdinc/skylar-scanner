@@ -1,5 +1,4 @@
 import { TRPCError } from "@trpc/server";
-import { decodeAbiParameters } from "viem";
 import { z } from "zod";
 
 import {
@@ -7,11 +6,12 @@ import {
   EthHashSchema,
   EvmChainIdSchema,
 } from "@skylarScan/schema";
-import { userOpSchema } from "@skylarScan/schema/src/evmTransaction";
 
 import { getViemClient } from "../lib/evmTransaction/client";
-import { HANDLE_OPS_INPUT } from "../lib/evmTransaction/constants";
-import { getUserOpFromHash } from "../lib/evmTransaction/utils";
+import {
+  getUserOpInfoFromParentHash,
+  getUserOpLogFromOpHash,
+} from "../lib/evmTransaction/utils";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const evmTransactionRouter = createTRPCRouter({
@@ -23,68 +23,27 @@ export const evmTransactionRouter = createTRPCRouter({
       const searchQuery = input.txn;
       const chainId = input.chainId;
 
-      // get the viem client
-      const client = getViemClient(chainId);
-
-      const parsedUserOpEventLog = await getUserOpFromHash(
+      const parsedUserOpEventLog = await getUserOpLogFromOpHash(
         searchQuery,
         chainId,
       );
 
+      // get the origin hash
       const parentHash = parsedUserOpEventLog.transactionHash;
 
-      if (!parentHash) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "parentHash not defined",
-          cause: "unknown",
-        });
-      }
-
-      const txnView = await client.getTransaction({ hash: parentHash });
-
-      const parsedInp: `0x${string}` = `0x${txnView.input.slice(10)}`;
-
-      const parentTxnInput = decodeAbiParameters(HANDLE_OPS_INPUT, parsedInp);
-
-      if (parentTxnInput.length !== 2) {
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Unknown Error Occured",
-          cause: "txnInput decoding error",
-        });
-      }
-
-      // get params
-      const uops = parentTxnInput[0];
-      const beneficiary = parentTxnInput[1];
-
-      // find targetUop with unique compound key (sender, nonce)
-      const uop = uops.find(
-        (uop) =>
-          uop.sender === parsedUserOpEventLog.args.sender &&
-          uop.nonce === parsedUserOpEventLog.args.nonce,
+      const uopInfo = await getUserOpInfoFromParentHash(
+        parentHash,
+        chainId,
+        parsedUserOpEventLog.args.sender,
+        parsedUserOpEventLog.args.nonce,
+        true,
       );
-
-      const targetUop = { beneficiary: beneficiary, ...uop };
-
-      const zodParsedTargetUop = userOpSchema.safeParse(targetUop);
-
-      if (!zodParsedTargetUop.success) {
-        console.error(targetUop);
-        console.error(zodParsedTargetUop.error.format());
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Error occured parsing txn Inputs",
-          cause: zodParsedTargetUop.error,
-        });
-      }
 
       // TODO: @ElasticBottle
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return JSON.parse(
         JSON.stringify(
-          zodParsedTargetUop.data,
+          uopInfo,
           (key, value) =>
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             typeof value === "bigint" ? value.toString() : value, // return everything else unchanged
