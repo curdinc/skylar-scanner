@@ -162,8 +162,8 @@ const colors = {
 const styles = {
   global: (props: StyleFunctionProps) => ({
     body: {
-      color: mode("black", "white")(props),
-      bg: mode("white", "black")(props),
+      color: mode("blue.900", "white")(props),
+      bg: mode("gray.200", "black")(props),
     },
   }),
 };

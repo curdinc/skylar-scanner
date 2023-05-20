@@ -8,6 +8,7 @@ export const HomePage = () => {
       flex={1}
       w="full"
       maxW="2xl"
+      marginTop={-20}
       alignItems="center"
       justifyContent={"center"}
       spacing={8}
