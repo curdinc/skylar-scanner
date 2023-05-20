@@ -128,8 +128,6 @@ export function KBarSearchPopUp() {
           </Flex>
           <RenderResults />
         </Box>
-        {/* <KBarAnimator 
-        </KBarAnimator> */}
       </KBarPositioner>
     </KBarPortal>
   );
