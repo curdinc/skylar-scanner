@@ -7,16 +7,19 @@ import {
   KBarProvider,
   KBarResults,
   KBarSearch,
+  useKBar,
   useMatches,
+  type Action,
 } from "kbar";
 import { Search } from "lucide-react";
 
 export function SearchBar() {
   const bgcolor = useColorModeValue("gray.200", "gray.700");
-  const [search, setSearch] = React.useState("");
+  const { search } = useKBar((state) => ({
+    search: state.searchQuery,
+  }));
 
-  const onSubmit = (e: React.FormEvent<HTMLDivElement>) => {
-    e.preventDefault();
+  const onSubmit = () => {
     // TODO: Figure out where to route
     console.log("search", search);
   };
@@ -33,13 +36,14 @@ export function SearchBar() {
     >
       <Search size="1.3rem" />
       {/* Search input */}
-      <Flex as={"form"} w="full" flexGrow={1} onSubmit={onSubmit}>
+      <Flex w="full" flexGrow={1}>
         <KBarSearch
           className="w-full bg-transparent px-4	outline-none"
           defaultPlaceholder="0xdeadbeefcafe..."
-          value={search}
-          onChange={(value) => {
-            setSearch(value.target.value);
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              onSubmit();
+            }
           }}
         />
       </Flex>
@@ -55,8 +59,8 @@ export function RenderResults() {
   return (
     <KBarResults
       items={results}
-      onRender={({ item, active }) =>
-        typeof item === "string" ? (
+      onRender={({ item, active }) => {
+        return typeof item === "string" ? (
           <div>{item}</div>
         ) : (
           <Flex
@@ -67,8 +71,8 @@ export function RenderResults() {
           >
             {item.name}
           </Flex>
-        )
-      }
+        );
+      }}
     />
   );
 }
@@ -80,7 +84,7 @@ export function KBarSearchProvider({
 }) {
   const { setColorMode } = useColorMode();
 
-  const actions = [
+  const actions: Action[] = [
     {
       id: "dark",
       name: "Dark Mode",

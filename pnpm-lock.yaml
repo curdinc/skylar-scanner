@@ -176,9 +176,6 @@ importers:
       '@skylarScan/api':
         specifier: ^0.1.0
         version: link:../../packages/api
-      '@skylarScan/auth':
-        specifier: ^0.1.0
-        version: link:../../packages/auth
       '@skylarScan/db':
         specifier: ^0.1.0
         version: link:../../packages/db
