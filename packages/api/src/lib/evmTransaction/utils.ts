@@ -116,17 +116,20 @@ export const getUserOpInfoFromParentHash = async (
 
 export const getTokenAndNFTDataFromBundleHash = async (
   bundleHash: EthHashType,
-  chainId: string,
+  chainId: EvmChainIdType,
 ) => {
+  console.log("first");
   const client = getViemClient(chainId);
+  console.log("3");
   const txnReceipt = await client.getTransactionReceipt({ hash: bundleHash });
 
   const logs = txnReceipt.logs;
-  const rawArray = new Array<{
+  const returnArray = new Array<{
     userOpHash: EthHashType;
     logs: Log<bigint, number>[];
   }>();
 
+  console.log("1");
   logs.forEach((log) => {
     const buf = new Array<Log<bigint, number>>();
     if (log.topics.length === 0) {
@@ -143,16 +146,12 @@ export const getTokenAndNFTDataFromBundleHash = async (
             message: "Unknown error: should not reach here",
           });
         }
-        rawArray.push({
+        returnArray.push({
           userOpHash: log.topics[1],
           logs: [...buf],
         });
       }
-      case SIGNATURES.TOKEN_TRANSFER: {
-        buf.push(log);
-        break;
-      }
-      case SIGNATURES.ERC721_TRANSFER: {
+      case SIGNATURES.ERC721_TRANSFER_OR_ERC20_TRANSFER: {
         buf.push(log);
         break;
       }
@@ -166,6 +165,7 @@ export const getTokenAndNFTDataFromBundleHash = async (
       }
     }
   });
+  return returnArray;
 };
 
 export function isEoaAddressEqual(a: string, b: string) {

@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import { EvmTransactionQuerySchema } from "@skylarScan/schema/src/evmTransaction";
 
 import { getViemClient } from "../lib/evmTransaction/client";
@@ -13,6 +15,19 @@ export const evmTransactionRouter = createTRPCRouter({
       const { chainId, txnHash: searchQuery } = input;
       return getUserOp(chainId, searchQuery);
     }),
+
+  transactionRecognizedInfo: publicProcedure
+    .meta({ openapi: { method: "GET", path: "/transactionRecognizedInfo" } })
+    .input(z.any())
+    .output(z.any())
+    .query(async ({ input }) => {
+      console.log("hi");
+      // const { chainId, txnHash } = input;
+      // const data = await getTokenAndNFTDataFromBundleHash(txnHash, chainId);
+      // return data;
+      return;
+    }),
+
   transactionInfo: publicProcedure
     .input(EvmTransactionQuerySchema)
     .query(async ({ input }) => {
