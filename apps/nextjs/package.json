@@ -19,11 +19,11 @@
     "@chakra-ui/theme-tools": "^2.0.16",
     "@emotion/react": "^11.10.8",
     "@emotion/styled": "^11.10.8",
+    "@next/font": "^13.3.4",
     "@skylarScan/api": "^0.1.0",
     "@skylarScan/auth": "^0.1.0",
     "@skylarScan/db": "^0.1.0",
     "@skylarScan/tailwind-config": "^0.1.0",
-    "@next/font": "^13.3.4",
     "@stripe/react-stripe-js": "^2.1.0",
     "@stripe/stripe-js": "^1.52.1",
     "@t3-oss/env-nextjs": "^0.2.2",
@@ -43,6 +43,7 @@
     "react-icons": "^4.8.0",
     "stripe": "^12.3.0",
     "superjson": "1.9.1",
+    "viem": "^0.3.31",
     "zod": "^3.21.4"
   },
   "devDependencies": {

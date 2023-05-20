@@ -19,6 +19,7 @@
     "superjson": "1.9.1",
     "trpc-openapi": "^1.1.2",
     "twilio": "^4.10.0",
+    "viem": "^0.3.31",
     "zod": "^3.21.4"
   },
   "devDependencies": {
