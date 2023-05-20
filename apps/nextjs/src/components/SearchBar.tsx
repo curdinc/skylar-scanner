@@ -16,16 +16,20 @@ import { Search } from "lucide-react";
 
 export function SearchBar() {
   const bgcolor = useColorModeValue("gray.200", "gray.700");
-  const { search } = useKBar((state) => ({
+  const { search, query } = useKBar((state) => ({
     search: state.searchQuery,
+    activeIndex: state.activeIndex,
   }));
 
   const router = useRouter();
 
   const onSubmit = () => {
-    router.push(`/parse/${search}`).catch((e) => {
-      console.log(`Error routing to parse/${search}: `, e);
-    });
+    if (search.startsWith("0x")) {
+      query.toggle();
+      router.push(`/parse/${search}`).catch((e) => {
+        console.log(`Error routing to parse/${search}: `, e);
+      });
+    }
   };
 
   return (
