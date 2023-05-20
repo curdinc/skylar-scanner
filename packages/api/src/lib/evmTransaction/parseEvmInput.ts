@@ -27,7 +27,6 @@ export async function parseEvmInput(query: string, chainId: EvmChainIdType) {
       return `/tx/${chainId}/${txn.hash}`;
     } catch (e) {
       console.error("Error getting transaction", e);
-      // maybe userop
       try {
         const userOp = await getUserOp(chainId, txnParse.data);
         console.log("userOp", userOp);

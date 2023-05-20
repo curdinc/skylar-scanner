@@ -17,7 +17,7 @@ export const ENTRY_POINT_CONTRACT_ADDRESSES: Record<
   `0x${string}`[]
 > = {
   "1": ["0x5FF137D4b0FDCD49DcA30c7CF57E578a026d2789"],
-  "5": [],
+  "5": ["0x0576a174D229E3cFA37253523E645A78A0C91B57"],
   "137": [],
   "80001": [],
 };
