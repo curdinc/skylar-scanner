@@ -19,14 +19,5 @@ export async function getUserOp(chainId: EvmChainIdType, searchQuery: string) {
     true,
   );
 
-  // TODO: @ElasticBottle
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return JSON.parse(
-    JSON.stringify(
-      uopInfo,
-      (key, value) =>
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        typeof value === "bigint" ? value.toString() : value, // return everything else unchanged
-    ),
-  );
+  return uopInfo;
 }

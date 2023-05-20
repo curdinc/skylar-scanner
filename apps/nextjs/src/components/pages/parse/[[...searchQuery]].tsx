@@ -29,6 +29,7 @@ export const ParseSearchQueryPage = () => {
   } = router;
 
   useEffect(() => {
+    setError("");
     if (searchQuery && searchQuery instanceof Array) {
       const result = EvmTransactionClientQuerySchema.safeParse({
         chainId,
