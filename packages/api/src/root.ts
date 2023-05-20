@@ -8,6 +8,7 @@ export const appRouter = createTRPCRouter({
   post: postRouter,
   auth: authRouter,
   discord: discordRouter,
+  evmTransaction: evmTransactionRouter,
 });
 
 // export type definition of API

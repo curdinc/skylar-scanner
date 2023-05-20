@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { createPublicClient, decodeAbiParameters, http } from "viem";
+import { decodeAbiParameters } from "viem";
 import { z } from "zod";
 
 import {
@@ -9,7 +9,6 @@ import {
 } from "@skylarScan/schema";
 import { userOpSchema } from "@skylarScan/schema/src/evmTransaction";
 
-import { env } from "../../env.mjs";
 import { getViemClient } from "../lib/evmTransaction/client";
 import { HANDLE_OPS_INPUT } from "../lib/evmTransaction/constants";
 import { getUserOpFromHash } from "../lib/evmTransaction/utils";
@@ -102,14 +101,13 @@ export const evmTransactionRouter = createTRPCRouter({
         // TODO
       }
       if (txnParse.success) {
-        const transport = http(
-          `https://mainnet.infura.io/v3/${env.INFURA_KEY}`,
-        );
-        const client = createPublicClient({
-          transport: transport,
-        });
+        const client = getViemClient(input.chainId);
         const txn = await client.getTransaction({ hash: txnParse.data });
         console.log("txn", txn);
       }
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Invalid search query",
+      });
     }),
 });

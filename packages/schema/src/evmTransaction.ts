@@ -1,4 +1,3 @@
-import { goerli, mainnet, polygon, polygonMumbai } from "viem/chains";
 import { z } from "zod";
 
 export const EthAddressSchema = z.custom<`0x{string}`>((val) => {
@@ -24,10 +23,10 @@ export const BlockTagSchema = z.enum([
 export const BlockNumberSchema = z.union([HexNumberSchema, BlockTagSchema]);
 
 export const EvmChainIdSchema = z.union([
-  z.literal(mainnet.id),
-  z.literal(goerli.id),
-  z.literal(polygon.id),
-  z.literal(polygonMumbai.id),
+  z.literal("1"),
+  z.literal("5"),
+  z.literal("137"),
+  z.literal("80001"),
 ]);
 export type EvmChainIdType = z.infer<typeof EvmChainIdSchema>;
 export const userOpSchema = z.object({

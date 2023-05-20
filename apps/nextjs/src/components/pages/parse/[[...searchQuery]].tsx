@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { Center, Spinner } from "@chakra-ui/react";
+import { Center, Spinner, Text } from "@chakra-ui/react";
 import { useAtom } from "jotai";
 
 import { api } from "~/utils/api";
@@ -18,6 +18,7 @@ export const ParseSearchQueryPage = () => {
   const {
     query: { searchQuery },
   } = router;
+  console.log("searchQuery", searchQuery);
 
   useEffect(() => {
     if (searchQuery && typeof searchQuery === "string") {
@@ -28,6 +29,13 @@ export const ParseSearchQueryPage = () => {
     }
   }, [chainId, parseSearchQuery, searchQuery]);
 
+  if (!searchQuery) {
+    return (
+      <Center flexGrow={1}>
+        <Text>Invalid Address or transaction</Text>
+      </Center>
+    );
+  }
   return (
     <Center flexGrow={1}>
       <Spinner />

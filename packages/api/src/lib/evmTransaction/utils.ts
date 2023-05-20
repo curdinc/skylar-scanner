@@ -6,7 +6,7 @@ import { getViemClient } from "./client";
 import { ENTRYPOINT_CONTRACT_ADDRESS, USER_OPERATION_EVENT } from "./constants";
 
 // params should already should be validated before called so we just crash
-export const getUserOpFromHash = async (opHash: string, chainId: number) => {
+export const getUserOpFromHash = async (opHash: string, chainId: string) => {
   const client = getViemClient(chainId);
 
   const filter = await client.createEventFilter({
@@ -50,3 +50,6 @@ export const getUserOpFromHash = async (opHash: string, chainId: number) => {
 
   return parsedUserOpEventLog;
 };
+export function isEoaAddressEqual(a: string, b: string) {
+  return a.toLowerCase() === b.toLowerCase();
+}

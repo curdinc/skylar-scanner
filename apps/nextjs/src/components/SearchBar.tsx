@@ -42,11 +42,15 @@ export function SearchBar() {
       {/* Search input */}
       <Flex w="full" flexGrow={1}>
         <KBarSearch
+          id="search"
           className="w-full bg-transparent px-4	outline-none"
           defaultPlaceholder="0xdeadbeefcafe..."
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               onSubmit();
+            }
+            if (e.key === "Escape") {
+              document.getElementById("search")?.blur();
             }
           }}
         />
