@@ -1,18 +1,24 @@
 import { TRPCError } from "@trpc/server";
-import { decodeAbiParameters } from "viem";
+import { createPublicClient, decodeAbiParameters, http } from "viem";
 import { z } from "zod";
 
+import {
+  EthAddressSchema,
+  EthHashSchema,
+  EvmChainIdSchema,
+} from "@skylarScan/schema";
+import {
+  userOpLogSchema,
+  userOpSchema,
+} from "@skylarScan/schema/src/evmTransaction.js";
+
+import { env } from "../../env.mjs";
 import { getViemClient } from "../lib/evmTransaction/client";
 import {
   ENTRYPOINT_CONTRACT_ADDRESS,
   USER_OPERATION_EVENT,
   USER_OPERATION_INPUT,
 } from "../lib/evmTransaction/constants";
-import {
-  EvmChainIdSchema,
-  userOpLogSchema,
-  userOpSchema,
-} from "../schema/evmTransaction";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const evmTransactionRouter = createTRPCRouter({
@@ -131,28 +137,24 @@ export const evmTransactionRouter = createTRPCRouter({
         ),
       );
     }),
-  // getBundle: publicProcedure
-  //   .meta({ openapi: { method: "GET", path: "/bundleInfo" } })
-  //   .input(
-  //     z.object({
-  //       title: z.string().min(1),
-  //       content: z.string().min(1),
-  //     }),
-  //   )
-  //   .query(async ({ input }) => {
-  //     return {};
-  //   }),
-  // getTransaction: publicProcedure
-  //   .meta({ openapi: { method: "GET", path: "/getTransaction" } })
-  //   .input(z.object({ txn: EthHashSchema, chainId: EvmChainIdSchema }))
-  //   .query(async ({ input }) => {
-  //     // TODO: Branch based on chainId
-  //     const transport = http(`https://mainnet.infura.io/v3/${env.INFURA_KEY}`);
-  //     const client = createPublicClient({
-  //       transport: transport,
-  //     });
-
-  //     const transaction = await client.getTransaction({ hash: input.txn });
-  //     return transaction;
-  //   }),
+  parseSearchQuery: publicProcedure
+    .input(z.object({ query: z.string(), chainId: EvmChainIdSchema }))
+    .mutation(async ({ input }) => {
+      const { query } = input;
+      const addressParse = EthAddressSchema.safeParse(query);
+      const txnParse = EthHashSchema.safeParse(query);
+      if (addressParse.success) {
+        // TODO
+      }
+      if (txnParse.success) {
+        const transport = http(
+          `https://mainnet.infura.io/v3/${env.INFURA_KEY}`,
+        );
+        const client = createPublicClient({
+          transport: transport,
+        });
+        const txn = await client.getTransaction({ hash: txnParse.data });
+        console.log("txn", txn);
+      }
+    }),
 });

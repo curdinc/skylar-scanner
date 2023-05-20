@@ -8,10 +8,9 @@ import {
 import { mode } from "@chakra-ui/theme-tools";
 import { Montserrat, Poppins } from "@next/font/google";
 import { Analytics } from "@vercel/analytics/react";
-import type { Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
 
 import { api } from "~/utils/api";
+import { Layout } from "~/components/Layout";
 import { KBarSearchPopUp, KBarSearchProvider } from "~/components/SearchBar";
 import "../styles/globals.css";
 
@@ -176,20 +175,20 @@ export const theme = extendTheme({
   styles,
 });
 
-const MyApp: AppType<{ session: Session | null }> = ({
+const MyApp: AppType<Record<string, unknown>> = ({
   Component,
-  pageProps: { session, ...pageProps },
+  pageProps: { ...pageProps },
 }) => {
   return (
-    <SessionProvider session={session}>
-      <ChakraProvider theme={theme}>
-        <KBarSearchProvider>
-          <KBarSearchPopUp />
+    <ChakraProvider theme={theme}>
+      <KBarSearchProvider>
+        <KBarSearchPopUp />
+        <Layout>
           <Component {...pageProps} />
-          <Analytics />
-        </KBarSearchProvider>
-      </ChakraProvider>
-    </SessionProvider>
+        </Layout>
+        <Analytics />
+      </KBarSearchProvider>
+    </ChakraProvider>
   );
 };
 

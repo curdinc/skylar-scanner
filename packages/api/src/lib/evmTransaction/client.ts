@@ -4,11 +4,11 @@ import { createPublicClient, http, type HttpTransport } from "viem";
 import { env } from "../../../env.mjs";
 
 // generate client for specific chain
-export const getViemClient = (chainId: string) => {
+export const getViemClient = (chainId: number) => {
   // TODO: Add other chains
   let transport: HttpTransport;
   switch (chainId) {
-    case "0x1": {
+    case 1: {
       transport = http(`https://mainnet.infura.io/v3/${env.INFURA_KEY}`);
       break;
     }
