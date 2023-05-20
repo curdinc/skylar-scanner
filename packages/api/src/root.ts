@@ -1,6 +1,6 @@
 import { authRouter } from "./router/auth";
 import { discordRouter } from "./router/discord";
-import { evmTransactionRouter } from "./router/evmTransction";
+import { evmTransactionRouter } from "./router/evmTransaction";
 import { postRouter } from "./router/post";
 import { twilioRouter } from "./router/twilio";
 import { createTRPCRouter } from "./trpc";
