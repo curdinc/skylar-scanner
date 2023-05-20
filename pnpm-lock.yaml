@@ -179,6 +179,9 @@ importers:
       '@skylarScan/db':
         specifier: ^0.1.0
         version: link:../../packages/db
+      '@skylarScan/schema':
+        specifier: ^0.1.0
+        version: link:../../packages/schema
       '@skylarScan/tailwind-config':
         specifier: ^0.1.0
         version: link:../../packages/config/tailwind
@@ -291,6 +294,9 @@ importers:
       '@skylarScan/db':
         specifier: ^0.1.0
         version: link:../db
+      '@skylarScan/schema':
+        specifier: ^0.1.0
+        version: link:../schema
       '@t3-oss/env-nextjs':
         specifier: ^0.2.2
         version: 0.2.2(zod@3.21.4)
@@ -412,6 +418,22 @@ importers:
       prisma:
         specifier: ^4.13.0
         version: 4.13.0
+      typescript:
+        specifier: ^5.0.4
+        version: 5.0.4
+
+  packages/schema:
+    dependencies:
+      zod:
+        specifier: ^3.21.4
+        version: 3.21.4
+    devDependencies:
+      '@skylarScan/eslint-config':
+        specifier: ^0.1.0
+        version: link:../config/eslint
+      eslint:
+        specifier: ^8.39.0
+        version: 8.39.0
       typescript:
         specifier: ^5.0.4
         version: 5.0.4

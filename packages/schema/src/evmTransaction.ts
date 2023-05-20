@@ -29,3 +29,4 @@ export const EvmChainIdSchema = z.union([
   z.literal(polygon.id),
   z.literal(polygonMumbai.id),
 ]);
+export type EvmChainIdType = z.infer<typeof EvmChainIdSchema>;

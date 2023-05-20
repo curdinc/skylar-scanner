@@ -9,7 +9,8 @@ import {
 } from "@chakra-ui/react";
 import { useAtom } from "jotai";
 import { goerli, mainnet, polygon, polygonMumbai } from "viem/chains";
-import { z } from "zod";
+
+import { EvmChainIdSchema } from "@skylarScan/schema";
 
 import { Ethereum, Polygon } from "~/assets/chainIcons";
 import { CurrentChainIdAtom } from "~/atoms/chain";
@@ -35,9 +36,10 @@ export const ChainSelector = () => {
       />
       <MenuList
         onClick={(e) => {
-          if ("value" in e.target) {
-            console.log("typeof e.target.value", typeof e.target.value);
-            const chainId = z.coerce.number().safeParse(e.target.value);
+          if ("value" in e.target && typeof e.target.value === "string") {
+            const chainId = EvmChainIdSchema.safeParse(
+              parseInt(e.target.value),
+            );
             if (!chainId.success) {
               return;
             }

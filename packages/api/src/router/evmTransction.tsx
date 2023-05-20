@@ -7,12 +7,13 @@ import {
 } from "viem";
 import { z } from "zod";
 
-import { env } from "../../env.mjs";
 import {
   EthAddressSchema,
   EthHashSchema,
   EvmChainIdSchema,
-} from "../schema/evmTransaction";
+} from "@skylarScan/schema";
+
+import { env } from "../../env.mjs";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const evmTransactionRouter = createTRPCRouter({
@@ -94,14 +95,23 @@ export const evmTransactionRouter = createTRPCRouter({
       return transaction;
     }),
   parseSearchQuery: publicProcedure
-    .input(z.object({ query: z.string() }))
+    .input(z.object({ query: z.string(), chainId: EvmChainIdSchema }))
     .mutation(async ({ input }) => {
       const { query } = input;
       const addressParse = EthAddressSchema.safeParse(query);
       const txnParse = EthHashSchema.safeParse(query);
       if (addressParse.success) {
+        // TODO
       }
       if (txnParse.success) {
+        const transport = http(
+          `https://mainnet.infura.io/v3/${env.INFURA_KEY}`,
+        );
+        const client = createPublicClient({
+          transport: transport,
+        });
+        const txn = await client.getTransaction({ hash: txnParse.data });
+        console.log("txn", txn);
       }
     }),
 });
