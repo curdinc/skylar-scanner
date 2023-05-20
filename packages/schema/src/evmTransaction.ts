@@ -47,7 +47,10 @@ export const EvmTransactionQuerySchema = z.object({
 });
 export type EvmTransactionQueryType = z.infer<typeof EvmTransactionQuerySchema>;
 
-export type EvmTransaction = Transaction;
+export type EvmTransaction = Transaction & {
+  nft: NftType[];
+  token: TokenType[];
+};
 
 export const userOpSchema = z.object({
   sender: EthAddressSchema,
