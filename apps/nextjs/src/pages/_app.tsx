@@ -1,31 +1,19 @@
 import type { AppType } from "next/app";
 import {
-  Box,
   ChakraProvider,
-  Flex,
   extendTheme,
-  useColorModeValue,
   type StyleFunctionProps,
   type ThemeConfig,
 } from "@chakra-ui/react";
 import { mode } from "@chakra-ui/theme-tools";
 import { Montserrat, Poppins } from "@next/font/google";
 import { Analytics } from "@vercel/analytics/react";
-import {
-  KBarAnimator,
-  KBarPortal,
-  KBarPositioner,
-  KBarProvider,
-  KBarResults,
-  NO_GROUP,
-  useMatches,
-} from "kbar";
 import type { Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
 
 import { api } from "~/utils/api";
+import { KBarSearchPopUp, KBarSearchProvider } from "~/components/SearchBar";
 import "../styles/globals.css";
-import SearchBar from "~/components/SearchBar";
 
 const montserrat = Montserrat({ subsets: ["latin-ext"], display: "swap" });
 const poppins = Poppins({
@@ -188,75 +176,6 @@ export const theme = extendTheme({
   styles,
 });
 
-const actions = [
-  {
-    id: "blog",
-    name: "Blog",
-    shortcut: ["b"],
-    keywords: "writing words",
-    perform: () => (window.location.pathname = "blog"),
-  },
-  {
-    id: "contact",
-    name: "Contact",
-    shortcut: ["c"],
-    keywords: "email",
-    perform: () => (window.location.pathname = "contact"),
-  },
-];
-
-function RenderResults() {
-  const { results } = useMatches();
-  const bgcolor = useColorModeValue("gray.200", "gray.800");
-
-  return (
-    <KBarResults
-      items={results}
-      onRender={({ item, active }) =>
-        typeof item === "string" ? (
-          <div>{item}</div>
-        ) : (
-          <Flex
-            width="100%"
-            paddingX={4}
-            paddingY={4}
-            bg={active ? bgcolor : "transparent"}
-          >
-            {item.name}
-          </Flex>
-        )
-      }
-    />
-  );
-}
-
-function KBarSearch() {
-  return (
-    // Renders the content outside the root node
-    <KBarPortal>
-      {/* Centers the content + create dark background */}
-      <KBarPositioner className="flex items-center bg-gray-900/80 p-2">
-        {/* show/hide and height animations */}
-        <Box
-          as={KBarAnimator}
-          bg={useColorModeValue("gray.100", "gray.900")}
-          rounded="lg"
-          width="100%"
-          maxWidth="2xl"
-          overflow="hidden"
-        >
-          <Flex height="16" alignContent="center">
-            <SearchBar />
-          </Flex>
-          <RenderResults />
-        </Box>
-        {/* <KBarAnimator 
-        </KBarAnimator> */}
-      </KBarPositioner>
-    </KBarPortal>
-  );
-}
-
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
   pageProps: { session, ...pageProps },
@@ -264,11 +183,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <ChakraProvider theme={theme}>
-        <KBarProvider actions={actions}>
-          <KBarSearch />
+        <KBarSearchProvider>
+          <KBarSearchPopUp />
           <Component {...pageProps} />
           <Analytics />
-        </KBarProvider>
+        </KBarSearchProvider>
       </ChakraProvider>
     </SessionProvider>
   );
