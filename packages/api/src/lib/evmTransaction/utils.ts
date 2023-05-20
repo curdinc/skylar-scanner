@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { decodeAbiParameters } from "viem";
+import { decodeAbiParameters, type Log } from "viem";
 
 import {
   userOpLogSchema,
@@ -13,6 +13,7 @@ import { getViemClient } from "./client";
 import {
   ENTRYPOINT_CONTRACT_ADDRESS,
   HANDLE_OPS_INPUT,
+  SIGNATURES,
   USER_OPERATION_EVENT,
 } from "./constants";
 
@@ -111,6 +112,60 @@ export const getUserOpInfoFromParentHash = async (
     });
   }
   return zodParsedTargetUop.data;
+};
+
+export const getTokenAndNFTDataFromBundleHash = async (
+  bundleHash: EthHashType,
+  chainId: string,
+) => {
+  const client = getViemClient(chainId);
+  const txnReceipt = await client.getTransactionReceipt({ hash: bundleHash });
+
+  const logs = txnReceipt.logs;
+  const rawArray = new Array<{
+    userOpHash: EthHashType;
+    logs: Log<bigint, number>[];
+  }>();
+
+  logs.forEach((log) => {
+    const buf = new Array<Log<bigint, number>>();
+    if (log.topics.length === 0) {
+      return;
+    }
+    switch (log.topics[0]) {
+      case SIGNATURES.USER_OPERATION: {
+        if (log.topics.length < 2 || log.topics[1] === undefined) {
+          console.error(
+            "Should never reach here there must be a weir collision.",
+          );
+          throw new TRPCError({
+            code: "INTERNAL_SERVER_ERROR",
+            message: "Unknown error: should not reach here",
+          });
+        }
+        rawArray.push({
+          userOpHash: log.topics[1],
+          logs: [...buf],
+        });
+      }
+      case SIGNATURES.TOKEN_TRANSFER: {
+        buf.push(log);
+        break;
+      }
+      case SIGNATURES.ERC721_TRANSFER: {
+        buf.push(log);
+        break;
+      }
+      case SIGNATURES.ERC1155_SINGLE_TRANSFER: {
+        buf.push(log);
+        break;
+      }
+      case SIGNATURES.ERC1155_MULTIPLE_TRANSFER: {
+        buf.push(log);
+        break;
+      }
+    }
+  });
 };
 
 export function isEoaAddressEqual(a: string, b: string) {
