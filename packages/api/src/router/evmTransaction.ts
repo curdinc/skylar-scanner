@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { createPublicClient, decodeAbiParameters, http } from "viem";
+import { decodeAbiParameters } from "viem";
 import { z } from "zod";
 
 import {
@@ -12,7 +12,6 @@ import {
   userOpSchema,
 } from "@skylarScan/schema/src/evmTransaction.js";
 
-import { env } from "../../env.mjs";
 import { getViemClient } from "../lib/evmTransaction/client";
 import {
   ENTRYPOINT_CONTRACT_ADDRESS,
@@ -25,7 +24,7 @@ export const evmTransactionRouter = createTRPCRouter({
   getUserOp: publicProcedure
     .meta({ openapi: { method: "GET", path: "/userOpInfo" } })
     .input(z.object({ txn: z.string(), chainId: EvmChainIdSchema }))
-    .output(z.any())
+    .output(userOpSchema)
     .query(async ({ input }) => {
       const searchQuery = input.txn;
       const chainId = input.chainId;
@@ -147,14 +146,13 @@ export const evmTransactionRouter = createTRPCRouter({
         // TODO
       }
       if (txnParse.success) {
-        const transport = http(
-          `https://mainnet.infura.io/v3/${env.INFURA_KEY}`,
-        );
-        const client = createPublicClient({
-          transport: transport,
-        });
+        const client = getViemClient(input.chainId);
         const txn = await client.getTransaction({ hash: txnParse.data });
         console.log("txn", txn);
       }
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Invalid search query",
+      });
     }),
 });
