@@ -10,6 +10,7 @@ import { Montserrat, Poppins } from "@next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 
 import { api } from "~/utils/api";
+import { Layout } from "~/components/Layout";
 import { KBarSearchPopUp, KBarSearchProvider } from "~/components/SearchBar";
 import "../styles/globals.css";
 
@@ -182,7 +183,9 @@ const MyApp: AppType<Record<string, unknown>> = ({
     <ChakraProvider theme={theme}>
       <KBarSearchProvider>
         <KBarSearchPopUp />
-        <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
         <Analytics />
       </KBarSearchProvider>
     </ChakraProvider>

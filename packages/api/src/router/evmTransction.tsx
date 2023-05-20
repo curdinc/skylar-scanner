@@ -8,7 +8,11 @@ import {
 import { z } from "zod";
 
 import { env } from "../../env.mjs";
-import { EthHashSchema, EvmChainIdSchema } from "../schema/evmTransaction";
+import {
+  EthAddressSchema,
+  EthHashSchema,
+  EvmChainIdSchema,
+} from "../schema/evmTransaction";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const evmTransactionRouter = createTRPCRouter({
@@ -88,5 +92,16 @@ export const evmTransactionRouter = createTRPCRouter({
 
       const transaction = await client.getTransaction({ hash: input.txn });
       return transaction;
+    }),
+  parseSearchQuery: publicProcedure
+    .input(z.object({ query: z.string() }))
+    .mutation(async ({ input }) => {
+      const { query } = input;
+      const addressParse = EthAddressSchema.safeParse(query);
+      const txnParse = EthHashSchema.safeParse(query);
+      if (addressParse.success) {
+      }
+      if (txnParse.success) {
+      }
     }),
 });

@@ -1,4 +1,5 @@
 import React from "react";
+import { useRouter } from "next/router";
 import { Box, Flex, useColorMode, useColorModeValue } from "@chakra-ui/react";
 import {
   KBarAnimator,
@@ -19,9 +20,12 @@ export function SearchBar() {
     search: state.searchQuery,
   }));
 
+  const router = useRouter();
+
   const onSubmit = () => {
-    // TODO: Figure out where to route
-    console.log("search", search);
+    router.push(`/parse/${search}`).catch((e) => {
+      console.log(`Error routing to parse/${search}: `, e);
+    });
   };
 
   return (

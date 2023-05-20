@@ -215,6 +215,9 @@ importers:
       framer-motion:
         specifier: ^10.12.5
         version: 10.12.5(react-dom@18.2.0)(react@18.2.0)
+      jotai:
+        specifier: ^2.1.0
+        version: 2.1.0(react@18.2.0)
       next:
         specifier: ^13.3.2
         version: 13.3.2(@babel/core@7.21.4)(react-dom@18.2.0)(react@18.2.0)
@@ -8227,6 +8230,18 @@ packages:
 
   /jose@4.13.1:
     resolution: {integrity: sha512-MSJQC5vXco5Br38mzaQKiq9mwt7lwj2eXpgpRyQYNHYt2lq1PjkWa7DLXX0WVcQLE9HhMh3jPiufS7fhJf+CLQ==}
+    dev: false
+
+  /jotai@2.1.0(react@18.2.0):
+    resolution: {integrity: sha512-fR82PtHAmEQrc/daMEYGc4EteW96/b6wodtDSCzLvoJA/6y4YG70er4hh2f8CYwYjqwQ0eZUModGfG4DmwkTyQ==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      react: '>=17.0.0'
+    peerDependenciesMeta:
+      react:
+        optional: true
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /js-sdsl@4.4.0:

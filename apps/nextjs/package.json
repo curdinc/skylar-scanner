@@ -34,6 +34,7 @@
     "@vercel/analytics": "^1.0.1",
     "cookies": "^0.8.0",
     "framer-motion": "^10.12.5",
+    "jotai": "^2.1.0",
     "next": "^13.3.2",
     "next-auth": "^4.22.1",
     "nextjs-cors": "^2.1.2",
