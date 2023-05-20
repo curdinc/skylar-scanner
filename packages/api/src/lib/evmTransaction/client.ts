@@ -18,7 +18,6 @@ export const getViemClient = (chainId: string) => {
         message: "invalid chain input",
         cause: "possibly unsupported",
       });
-      break;
     }
   }
   const client = createPublicClient({

@@ -4,6 +4,9 @@ import { decodeAbiParameters } from "viem";
 import {
   userOpLogSchema,
   userOpSchema,
+  type EthAddressType,
+  type EthHashType,
+  type EvmChainIdType,
 } from "@skylarScan/schema/src/evmTransaction";
 
 import { getViemClient } from "./client";
@@ -63,11 +66,11 @@ export const getUserOpLogFromOpHash = async (
 };
 
 export const getUserOpInfoFromParentHash = async (
-  parentHash: string,
-  chainId: string,
-  sender: string,
+  parentHash: EthHashType,
+  chainId: EvmChainIdType,
+  sender: EthAddressType,
   nonce: bigint,
-  moreInfo: boolean,
+  moreInfo = false,
 ) => {
   // get the viem client
   const client = getViemClient(chainId);
