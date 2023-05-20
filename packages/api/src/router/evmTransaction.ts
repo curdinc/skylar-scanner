@@ -84,8 +84,6 @@ export const evmTransactionRouter = createTRPCRouter({
 
       const txnView = await client.getTransaction({ hash: parentHash });
 
-      const inp = txnView.input;
-
       const parsedInp: `0x${string}` = `0x${txnView.input.slice(10)}`;
 
       const parentTxnInput = decodeAbiParameters(HANDLE_OPS_INPUT, parsedInp);
