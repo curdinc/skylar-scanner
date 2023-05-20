@@ -7,18 +7,12 @@ import {
   EthHashSchema,
   EvmChainIdSchema,
 } from "@skylarScan/schema";
-import {
-  userOpLogSchema,
-  userOpSchema,
-} from "@skylarScan/schema/src/evmTransaction.js";
+import { userOpSchema } from "@skylarScan/schema/src/evmTransaction";
 
 import { env } from "../../env.mjs";
 import { getViemClient } from "../lib/evmTransaction/client";
-import {
-  ENTRYPOINT_CONTRACT_ADDRESS,
-  HANDLE_OPS_INPUT,
-  USER_OPERATION_EVENT,
-} from "../lib/evmTransaction/constants";
+import { HANDLE_OPS_INPUT } from "../lib/evmTransaction/constants";
+import { getUserOpFromHash } from "../lib/evmTransaction/utils";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const evmTransactionRouter = createTRPCRouter({
@@ -33,44 +27,10 @@ export const evmTransactionRouter = createTRPCRouter({
       // get the viem client
       const client = getViemClient(chainId);
 
-      const filter = await client.createEventFilter({
-        address: ENTRYPOINT_CONTRACT_ADDRESS,
-        event: USER_OPERATION_EVENT,
-        args: [searchQuery],
-        fromBlock: 17296100n,
-      });
-
-      const logs = await client.getFilterLogs({ filter });
-
-      if (logs.length !== 1) {
-        console.error("Hash not found or collides");
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "invalid length of transactions",
-          cause: "Hash not found or collides",
-        });
-      }
-
-      const zodParseUserOpEventLog = userOpLogSchema.safeParse(logs[0]);
-      if (!zodParseUserOpEventLog.success) {
-        console.error(logs[0]);
-        console.error(zodParseUserOpEventLog.error.format());
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "Error occured parsing txn Inputs",
-          cause: zodParseUserOpEventLog.error,
-        });
-      }
-      const parsedUserOpEventLog = zodParseUserOpEventLog.data;
-
-      if (parsedUserOpEventLog === undefined) {
-        console.error("should never reach here");
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: "An unknown error has occured.",
-          cause: "Log in undefined.",
-        });
-      }
+      const parsedUserOpEventLog = await getUserOpFromHash(
+        searchQuery,
+        chainId,
+      );
 
       const parentHash = parsedUserOpEventLog.transactionHash;
 
