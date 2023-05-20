@@ -45,6 +45,7 @@ export const userOpSchema = z.object({
   signature: BytesSchema,
   beneficiary: EthAddressSchema,
 });
+export type userOpType = z.infer<typeof userOpSchema>;
 
 export const userOpLogSchema = z.object({
   address: EthAddressSchema,
