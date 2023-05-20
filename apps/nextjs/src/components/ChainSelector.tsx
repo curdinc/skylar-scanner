@@ -36,10 +36,8 @@ export const ChainSelector = () => {
       />
       <MenuList
         onClick={(e) => {
-          if ("value" in e.target && typeof e.target.value === "string") {
-            const chainId = EvmChainIdSchema.safeParse(
-              parseInt(e.target.value),
-            );
+          if ("value" in e.target) {
+            const chainId = EvmChainIdSchema.safeParse(e.target.value);
             if (!chainId.success) {
               return;
             }
