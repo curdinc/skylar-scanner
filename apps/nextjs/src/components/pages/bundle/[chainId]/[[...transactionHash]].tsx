@@ -4,20 +4,20 @@ import { Center, Spinner } from "@chakra-ui/react";
 
 import {
   EvmTransactionClientQuerySchema,
-  type userOpType,
+  type EvmTransaction,
 } from "@skylarScan/schema/src/evmTransaction";
 
 import { api } from "~/utils/api";
 import CopyClipboard from "~/components/CopyClipboard";
 import { DataTable } from "../../../Table";
 
-export const UserOpPage = () => {
+export const BundleTransactionPage = () => {
   const {
     query: { transactionHash, chainId },
   } = useRouter();
   const [error, setError] = useState("");
   const context = api.useContext();
-  const [userOpData, setUserOpData] = useState<userOpType | undefined>(
+  const [userOpData, setUserOpData] = useState<EvmTransaction | undefined>(
     undefined,
   );
   const isLoading = !userOpData && !error;
@@ -32,7 +32,7 @@ export const UserOpPage = () => {
       txnHash: transactionHash,
     });
     if (result.success) {
-      context.evmTransaction.userOpInfo
+      context.evmTransaction.transactionInfo
         .fetch({
           chainId: result.data.chainId,
           txnHash: result.data.txnHash[0] ?? "0x",

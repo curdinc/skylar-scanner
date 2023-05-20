@@ -3,42 +3,41 @@ import { useRouter } from "next/router";
 import { Center, Spinner } from "@chakra-ui/react";
 
 import {
+  EvmTransaction,
   EvmTransactionClientQuerySchema,
-  type userOpType,
 } from "@skylarScan/schema/src/evmTransaction";
 
 import { api } from "~/utils/api";
 import CopyClipboard from "~/components/CopyClipboard";
 import { DataTable } from "../../../Table";
 
-export const UserOpPage = () => {
+export const TransactionPage = () => {
   const {
     query: { transactionHash, chainId },
   } = useRouter();
   const [error, setError] = useState("");
   const context = api.useContext();
-  const [userOpData, setUserOpData] = useState<userOpType | undefined>(
-    undefined,
-  );
-  const isLoading = !userOpData && !error;
+  const [transactionInfo, setTransactionInfo] = useState<
+    EvmTransaction | undefined
+  >(undefined);
+  const isLoading = !transactionInfo && !error;
 
   useEffect(() => {
     if (!chainId || !transactionHash) {
       return;
     }
-
     const result = EvmTransactionClientQuerySchema.safeParse({
       chainId,
       txnHash: transactionHash,
     });
     if (result.success) {
-      context.evmTransaction.userOpInfo
+      context.evmTransaction.transactionInfo
         .fetch({
           chainId: result.data.chainId,
           txnHash: result.data.txnHash[0] ?? "0x",
         })
         .then((result) => {
-          setUserOpData(result);
+          setTransactionInfo(result);
         })
         .catch((e) => {
           console.error("Error fetching user operation info", e);
