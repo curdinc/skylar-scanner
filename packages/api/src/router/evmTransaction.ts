@@ -14,7 +14,7 @@ import {
 } from "@skylarScan/schema";
 
 import { env } from "../../env.mjs";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc.js";
 
 export const evmTransactionRouter = createTRPCRouter({
   getUserOp: publicProcedure
