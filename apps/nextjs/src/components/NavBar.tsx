@@ -46,11 +46,7 @@ export default function Navbar({
       <Flex alignItems={"center"} gap={2}>
         <ChainSelector />
         <Button onClick={toggleColorMode} padding="2">
-          {colorMode === "light" ? (
-            <Moon size="1.3rem" />
-          ) : (
-            <Sun size="1.3rem" />
-          )}
+          {colorMode === "light" ? <Moon size="20" /> : <Sun size="20" />}
         </Button>
       </Flex>
     </Flex>

@@ -1,6 +1,14 @@
 import React from "react";
 import router from "next/router";
-import { Box, Flex, useColorMode, useColorModeValue } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Icon,
+  Text,
+  useColorMode,
+  useColorModeValue,
+} from "@chakra-ui/react";
+import { useAtom } from "jotai";
 import {
   KBarAnimator,
   KBarPortal,
@@ -15,6 +23,9 @@ import {
 import { Search } from "lucide-react";
 
 import { parseQuerySchema } from "@skylarScan/schema/src/addressDetails";
+
+import { Ethereum, Polygon } from "~/assets/chainIcons";
+import { CurrentChainIdAtom } from "~/atoms/chain";
 
 export function SearchBar() {
   const bgcolor = useColorModeValue("gray.200", "gray.700");
@@ -44,7 +55,7 @@ export function SearchBar() {
       rounded="lg"
       h="12"
     >
-      <Search size="1.3rem" />
+      <Search size="20" />
       {/* Search input */}
       <Flex w="full" flexGrow={1}>
         <KBarSearch
@@ -75,15 +86,19 @@ export function RenderResults() {
       items={results}
       onRender={({ item, active }) => {
         return typeof item === "string" ? (
-          <div>{item}</div>
+          <Flex px={4} py={2} w="full" fontSize={"sm"} opacity={0.6}>
+            {item}
+          </Flex>
         ) : (
           <Flex
-            width="100%"
-            paddingX={4}
-            paddingY={4}
+            alignItems={"center"}
+            width="full"
+            px={8}
+            py={4}
             bg={active ? bgcolor : "transparent"}
           >
-            {item.name}
+            {item.icon}
+            <Text>{item.name}</Text>
           </Flex>
         );
       }}
@@ -97,13 +112,52 @@ export function KBarSearchProvider({
   children: React.ReactNode;
 }) {
   const { setColorMode } = useColorMode();
+  const [, setChainId] = useAtom(CurrentChainIdAtom);
 
   const actions: Action[] = [
+    {
+      id: "ethereum",
+      name: "Ethereum",
+      shortcut: ["n", "e"],
+      keywords: "mainnet homestead 1 0x1",
+      section: "Network",
+      icon: <Icon as={Ethereum} rounded="full" mr={2} />,
+      perform: () => setChainId("1"),
+    },
+    {
+      id: "polygon",
+      name: "Polygon",
+      shortcut: ["n", "p"],
+      keywords: "Mumbai Maticum mainnet 0x89 137",
+      section: "Network",
+      icon: <Icon as={Polygon} rounded="full" mr={2} />,
+      perform: () => setChainId("137"),
+    },
+    {
+      id: "goerli",
+      name: "Goerli",
+      shortcut: ["n", "g"],
+      keywords: "testnet 5 0x5",
+      section: "Network",
+      icon: <Icon as={Ethereum} testnet rounded="full" mr={2} />,
+      perform: () => setChainId("5"),
+    },
+    {
+      id: "mumbai",
+      name: "Mumbai",
+      shortcut: ["n", "m"],
+      keywords: "Mumbai Polygon testnet 80001",
+      section: "Network",
+      icon: <Icon as={Polygon} testnet rounded="full" mr={2} />,
+
+      perform: () => setChainId("80001"),
+    },
     {
       id: "dark",
       name: "Dark Mode",
       shortcut: ["d"],
       keywords: "dark",
+      section: "Theme",
       perform: () => setColorMode("dark"),
     },
     {
@@ -111,11 +165,21 @@ export function KBarSearchProvider({
       name: "Light Mode",
       shortcut: ["l"],
       keywords: "light blind",
+      section: "Theme",
       perform: () => setColorMode("light"),
     },
   ];
 
-  return <KBarProvider actions={actions}>{children}</KBarProvider>;
+  return (
+    <KBarProvider
+      options={{
+        enableHistory: true,
+      }}
+      actions={actions}
+    >
+      {children}
+    </KBarProvider>
+  );
 }
 
 export function KBarSearchPopUp() {
