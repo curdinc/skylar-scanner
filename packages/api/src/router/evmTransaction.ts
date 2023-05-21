@@ -1,10 +1,12 @@
 import { formatGwei, formatUnits, isAddressEqual } from "viem";
+import { z } from "zod";
 
 import { EvmParseQuerySchema } from "@skylarScan/schema/src/addressDetails";
 import {
+  EthAddressSchema,
   EthHashSchema,
+  EvmChainIdSchema,
   EvmTransactionQuerySchema,
-  userOpDetailsSchema,
   userOpInfoPayloadSchema,
   type transactionType,
 } from "@skylarScan/schema/src/evmTransaction";
@@ -16,6 +18,7 @@ import { swapToUsd } from "../lib/evmTransaction/oneInchExchange";
 import { parseEvmInput } from "../lib/evmTransaction/parseEvmInput";
 import {
   getTokenAndNFTDataFromBundleHash,
+  getUserOpLogsFromSender,
   parseBundleInput,
 } from "../lib/evmTransaction/utils";
 import { createTRPCRouter, publicProcedure } from "../trpc";
@@ -27,9 +30,17 @@ export const evmTransactionRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { chainId, txnHash: searchQuery } = input;
       const res = await getUserOp(chainId, searchQuery, true);
-      return userOpDetailsSchema.parse(res);
+      console.log(res, "res");
+      return res;
     }),
-
+  userRecentTxns: publicProcedure
+    .input(z.object({ sender: EthAddressSchema, chainId: EvmChainIdSchema }))
+    .query(async ({ input }) => {
+      const { chainId, sender } = input;
+      const res = await getUserOpLogsFromSender(sender, chainId);
+      console.log(res, "res");
+      return res;
+    }),
   // testing
   transactionRecognizedInfo: publicProcedure
     .meta({ openapi: { method: "GET", path: "/transactionRecognizedInfo" } })
