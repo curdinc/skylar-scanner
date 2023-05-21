@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { useRouter } from "next/router";
 import {
   Button,
@@ -7,6 +8,7 @@ import {
 } from "@chakra-ui/react";
 import { Moon, SunMedium as Sun } from "lucide-react";
 
+import cat2 from "../../public/cat2.svg";
 import { ChainSelector } from "./ChainSelector";
 import { SearchBar } from "./SearchBar";
 
@@ -17,6 +19,7 @@ export default function Navbar({
 }) {
   const { colorMode, toggleColorMode } = useColorMode();
   const router = useRouter();
+  const imgFilter = useColorModeValue("invert(20%)", "invert(85%)");
   return (
     <Flex
       bg={useColorModeValue("gray.100", "dark.600")}
@@ -35,7 +38,12 @@ export default function Navbar({
         }}
         variant={"ghost"}
       >
-        Logo
+        <Image
+          src={cat2}
+          alt="cute cat logo"
+          width={42}
+          style={{ filter: imgFilter }}
+        />
       </Button>
 
       {showSearchBar && (
