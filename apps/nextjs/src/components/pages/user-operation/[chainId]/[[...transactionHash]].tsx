@@ -9,10 +9,11 @@ import {
   Spinner,
   Text,
 } from "@chakra-ui/react";
+import { formatUnits } from "viem";
 
 import {
   EvmTransactionClientQuerySchema,
-  type userOpDetailsType,
+  type transactionType,
 } from "@skylarScan/schema/src/evmTransaction";
 
 import { api } from "~/utils/api";
@@ -38,18 +39,25 @@ type nftType = {
   NFT: string;
   Amount: string;
 };
+
+type tokenType = {
+  From: string;
+  To: string;
+  Amount: string;
+};
 export const UserOpPage = () => {
   const {
     query: { transactionHash, chainId },
   } = useRouter();
   const [error, setError] = useState("");
   const context = api.useContext();
-  const [userOpData, setUserOpData] = useState<userOpDetailsType | undefined>(
+  const [userOpData, setUserOpData] = useState<transactionType | undefined>(
     undefined,
   );
   const [userOpArray, setUserOpArray] = useState<UserOpDataDisplayType[]>([]);
   const [moreInfoArray, setMoreInfoArray] = useState<moreInfoType[]>([]);
   const [nftArray, setNftArray] = useState<nftType[]>([]);
+  const [tokenArray, setTokenArray] = useState<tokenType[]>([]);
   const [timeDiff, setTimeDiff] = useState("");
   const isLoading = !userOpData && !error;
   const router = useRouter();
@@ -72,12 +80,9 @@ export const UserOpPage = () => {
           txnHash: result.data.txnHash[0] ?? "0x",
         })
         .then((result) => {
-          console.log("update");
-
           setUserOpData(result);
         })
         .catch((e) => {
-          console.log("update");
           console.error("Error fetching user operation info", e);
           if (e instanceof Error) {
             setError(e.message);
@@ -105,7 +110,7 @@ export const UserOpPage = () => {
   useEffect(() => {
     const userDataArray: UserOpDataDisplayType[] = [];
     if (userOpData) {
-      Object.keys(userOpData.parsedUserOp).forEach((_item) => {
+      Object.keys(userOpData.parsedInput).forEach((_item) => {
         const item = _item as keyof typeof userOpData.parsedUserOp;
         const type = userOpMap[item];
         const data =
@@ -164,10 +169,20 @@ export const UserOpPage = () => {
           From: item.from,
           To: item.to,
           NFT: item.name,
-          Amount: item.amount,
+          Amount: item.amount.toString(),
         });
       });
       setNftArray(newNFTArray);
+
+      const newTokenArray: tokenType[] = [];
+      userOpData.tokens.forEach((item) => {
+        newTokenArray.push({
+          From: item.from,
+          To: item.to,
+          Amount: formatUnits(item.amount, item.decimals),
+        });
+      });
+      setTokenArray(newTokenArray);
 
       setTimeDiff(formatDateSince(userOpData.timestamp.getTime()));
     }
@@ -254,7 +269,6 @@ export const UserOpPage = () => {
       <AccordianTable headers={[]} title="More info" data={moreInfoArray} />
 
       {/* NFTs */}
-      {console.log(userOpData?.nfts)}
       {userOpData && (
         <AccordianTable
           headers={
@@ -262,10 +276,21 @@ export const UserOpPage = () => {
               ? ["From", "To", "NFT", "Amount"]
               : []
           }
-          title={`NFTs ${
-            userOpData?.nfts.length > 0 ? userOpData?.nfts.length : ""
-          }`}
+          title={`NFTs [ ${userOpData?.nfts.length} ]`}
           data={nftArray}
+        />
+      )}
+
+      {/* Tokens */}
+      {userOpData && (
+        <AccordianTable
+          headers={
+            userOpData?.tokens && userOpData?.tokens.length > 0
+              ? ["From", "To", "Amount"]
+              : []
+          }
+          title={`Tokens [ ${userOpData?.tokens.length} ]`}
+          data={tokenArray}
         />
       )}
     </Box>

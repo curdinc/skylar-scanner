@@ -27,13 +27,18 @@ export function DataTable({
   const color = useColorModeValue("gray.500", "gray.400");
   const colorHeader = useColorModeValue("gray.600", "gray.300");
   return (
-    <TableContainer>
-      <Table variant="simple">
+    <TableContainer width={"100%"}>
+      <Table variant="simple" overflow="hidden">
         {headers.length !== 0 && (
           <Thead>
             <Tr>
               {headers.map((header) => (
-                <Th key={header} borderColor={borderColor} color={colorHeader}>
+                <Th
+                  key={header}
+                  borderColor={borderColor}
+                  color={colorHeader}
+                  minWidth="150px"
+                >
                   {header}
                 </Th>
               ))}
@@ -44,7 +49,12 @@ export function DataTable({
           {data.map((item, index) => (
             <Tr key={index}>
               {Object.keys(item).map((key) => (
-                <Td key={key} borderColor={borderColor} color={color}>
+                <Td
+                  key={key}
+                  borderColor={borderColor}
+                  color={color}
+                  minWidth="150px"
+                >
                   {typeof item[key] === "string" ||
                   typeof item[key] === "bigint"
                     ? item[key].toString()
@@ -70,7 +80,7 @@ export function AccordianTable({
   headers: string[];
   data: Array<any>;
   title: string;
-}) {
+}): JSX.Element {
   const bgcolor = useColorModeValue("gray.100", "darkColor.500");
   return (
     <Box rounded="md" bg={bgcolor}>
