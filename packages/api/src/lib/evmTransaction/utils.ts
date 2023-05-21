@@ -120,7 +120,7 @@ export const getUserOpInfoFromParentHash = async (
     entryPointContract: txnReceipt.to,
     userOpHash,
     parsedUserOp: uop,
-    rawUserOp: parsedInp,
+    rawUserOp: txnView.input,
     gasData: {
       gasUsed: actualGasUsed.toString(),
       gasLimit: (

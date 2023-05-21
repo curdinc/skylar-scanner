@@ -10,8 +10,10 @@ import {
 export async function getUserOp(
   chainId: EvmChainIdType,
   searchQuery: string,
-  moreInfo: boolean,
+  moreInfo = false,
 ) {
+  console.log("startGetUOP");
+
   const parsedUserOpEventLog = await getUserOpLogFromOpHash(
     searchQuery,
     chainId,

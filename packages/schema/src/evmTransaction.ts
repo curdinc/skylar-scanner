@@ -159,7 +159,7 @@ export const userOpDetailsSchema = z.object({
   ...userOpSchema.shape,
   tokens: TokenSchema.array(),
   nfts: NftSchema.array(),
-  coins: CoinSchema.array().default([]),
+  // coins: CoinSchema.array().default([]),
 });
 
 export type userOpDetailsType = z.infer<typeof userOpDetailsSchema>;
