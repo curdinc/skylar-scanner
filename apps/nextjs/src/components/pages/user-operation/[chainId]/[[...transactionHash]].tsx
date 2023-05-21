@@ -16,6 +16,7 @@ import {
 } from "@skylarScan/schema/src/evmTransaction";
 
 import { api } from "~/utils/api";
+import { formatDateSince } from "~/utils/date";
 import CopyClipboard from "~/components/CopyClipboard";
 import TransactionCost from "~/components/TransactionCost";
 import { AccordianTable } from "../../../Table";
@@ -139,26 +140,7 @@ export const UserOpPage = () => {
         },
       ]);
 
-      const ms = curDate - userOpData.timestamp.getTime();
-      let timeDiff = 0;
-      let unit = "";
-      if (ms >= 2592000000) {
-        timeDiff = Math.floor(ms / 2592000000);
-        unit = " month";
-      } else if (ms >= 604800000) {
-        timeDiff = Math.floor(ms / 604800000);
-        unit = " week";
-      } else if (ms >= 86400000) {
-        timeDiff = Math.floor(ms / 86400000);
-        unit = " day";
-      } else if (ms >= 3600000) {
-        timeDiff = Math.floor(ms / 3600000);
-        unit = " hour";
-      } else {
-        timeDiff = Math.floor(ms / 3600000);
-        unit = " minute";
-      }
-      // setTimeDiff();
+      setTimeDiff(formatDateSince(userOpData.timestamp.getTime()));
     }
   }, [userOpData]);
 
@@ -188,7 +170,7 @@ export const UserOpPage = () => {
 
       {userOpData && (
         <Text marginTop={"-4"}>
-          UserOp submitted {} minutes ago by SCW address
+          UserOp submitted {timeDiff} ago by SCW address
         </Text>
       )}
 
@@ -207,7 +189,6 @@ export const UserOpPage = () => {
           {userOpData && <TransactionCost data={userOpData} size="md" />}
         </Flex>
       </Box>
-      {/* Time is not there */}
 
       {/* User OP  */}
       <AccordianTable
@@ -218,35 +199,6 @@ export const UserOpPage = () => {
 
       {/* More info */}
       <AccordianTable headers={[]} title="More info" data={moreInfoArray} />
-      {/* <Box rounded="lg" bg={bgcolor}>
-        <Accordion defaultIndex={[0]} rounded="md" allowMultiple>
-          <AccordionItem>
-            <h1>
-              <AccordionButton>
-                <Box
-                  as="span"
-                  flex="1"
-                  textAlign="left"
-                  fontSize="3xl"
-                  fontWeight="bold"
-                  padding="5"
-                >
-                  User Op
-                </Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h1>
-            <AccordionPanel pb={4}>
-              <DataTable
-                headers={["Name", "Type", "Data"]}
-                data={userOpArray}
-              />
-            </AccordionPanel>
-          </AccordionItem>
-        </Accordion>
-      </Box> */}
-
-      <div></div>
     </Box>
   );
 };

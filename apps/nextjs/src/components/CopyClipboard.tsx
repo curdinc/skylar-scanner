@@ -17,7 +17,9 @@ function CopyClipboard({ value, size, header }: props) {
           {formatEvmAddress(value)}
         </Heading>
       ) : (
-        <Text fontSize={size}>{formatEvmAddress(value)}</Text>
+        <Text fontSize={size} color="gray.400">
+          {formatEvmAddress(value)}
+        </Text>
       )}
 
       <CopyPopover content={value} size={size} />

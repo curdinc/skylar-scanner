@@ -37,6 +37,7 @@ export const NftDisplay = ({
     return <Center flexGrow={1}>{error.message}</Center>;
   }
 
+  formattedData = nftData?.nfts.ownedNfts.map((ownedNft) => 9);
   return (
     <Grid templateColumns="repeat(3, 1fr)" gap={6}>
       <Card
