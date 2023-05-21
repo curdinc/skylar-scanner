@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { Center, Spinner, Text } from "@chakra-ui/react";
 import { useAtom } from "jotai";
 
-import { EvmTransactionClientQuerySchema } from "@skylarScan/schema/src/evmTransaction";
+import { EvmParseQuerySchema } from "@skylarScan/schema/src/addressDetails";
 
 import { api } from "~/utils/api";
 import { CurrentChainIdAtom } from "~/atoms/chain";
@@ -30,14 +30,14 @@ export const ParseSearchQueryPage = () => {
 
   useEffect(() => {
     setError("");
-    if (searchQuery && searchQuery instanceof Array) {
-      const result = EvmTransactionClientQuerySchema.safeParse({
+    if (searchQuery && typeof searchQuery === "string") {
+      const result = EvmParseQuerySchema.safeParse({
         chainId,
-        txnHash: searchQuery,
+        query: searchQuery,
       });
       if (result.success) {
         parseSearchQuery({
-          txnHash: result.data.txnHash[0] ?? "0x",
+          query: result.data.query,
           chainId,
         });
       } else {

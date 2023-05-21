@@ -14,6 +14,8 @@ import {
 } from "kbar";
 import { Search } from "lucide-react";
 
+import { parseQuerySchema } from "@skylarScan/schema/src/addressDetails";
+
 export function SearchBar() {
   const bgcolor = useColorModeValue("gray.200", "gray.700");
   const { search, query, visualState } = useKBar((state) => ({
@@ -22,7 +24,7 @@ export function SearchBar() {
   }));
 
   const onSubmit = () => {
-    if (search.startsWith("0x")) {
+    if (parseQuerySchema.safeParse(search).success) {
       if (visualState === "showing") {
         query.toggle();
       }

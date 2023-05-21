@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { EvmParseQuerySchema } from "@skylarScan/schema/src/addressDetails";
 import {
   EthHashSchema,
   EvmTransactionQuerySchema,
@@ -31,9 +32,9 @@ export const evmTransactionRouter = createTRPCRouter({
     }),
 
   parseSearchQuery: publicProcedure
-    .input(EvmTransactionQuerySchema)
+    .input(EvmParseQuerySchema)
     .mutation(async ({ input }) => {
-      const { txnHash, chainId } = input;
-      return parseEvmInput(txnHash, chainId);
+      const { query, chainId } = input;
+      return parseEvmInput(query, chainId);
     }),
 });
