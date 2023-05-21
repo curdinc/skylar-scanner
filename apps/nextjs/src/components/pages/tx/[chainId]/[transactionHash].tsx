@@ -90,7 +90,7 @@ export const TransactionPage = () => {
               );
             });
           toast({
-            title: "Copied From hash",
+            title: "Copied From Address",
             status: "success",
             duration: 2000,
             isClosable: true,

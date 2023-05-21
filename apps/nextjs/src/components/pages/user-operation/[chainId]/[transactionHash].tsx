@@ -112,7 +112,7 @@ export const UserOpPage = () => {
             );
           });
           toast({
-            title: "Copied From hash",
+            title: "Copied From address",
             status: "success",
             duration: 2000,
             isClosable: true,
