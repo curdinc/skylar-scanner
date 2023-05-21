@@ -8,6 +8,7 @@ import {
   EthAddressSchema,
   userOpLogSchema,
   userOpSchema,
+  type EthAddressType,
   type EthHashType,
   type EvmChainIdType,
   type NftType,
@@ -27,6 +28,27 @@ import { swapToUsd } from "./oneInchExchange";
 const bigNumberToBigInt = (bigNum: ethers.BigNumber): bigint => {
   return BigInt(bigNum.toString());
 };
+// params should already should be validated before called so we just crash
+export const getUserOpLogsFromSender = async (
+  sender: EthAddressType,
+  chainId: EvmChainIdType,
+) => {
+  const client = getViemClient(chainId);
+  const currBlock = client.getBlockNumber();
+  const entryPointContract = ENTRY_POINT_CONTRACT_ADDRESSES[chainId][0];
+
+  const filter = await client.createEventFilter({
+    address: entryPointContract,
+    event: USER_OPERATION_EVENT,
+    args: [null, sender],
+    fromBlock: currBlock - 100000n,
+  });
+
+  console.log("filter", filter);
+  return filter;
+};
+
+const logs = await client.getFilterLogs({ filter });
 // params should already should be validated before called so we just crash
 export const getUserOpLogFromOpHash = async (
   opHash: string,
