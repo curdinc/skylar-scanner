@@ -206,7 +206,7 @@ export const getTokenAndNFTDataFromBundleHash = async (
           console.log(from, to);
 
           const tokenLog = {
-            amount: fromHex(log.data, "string"),
+            amount: fromHex(log.data, "bigint"),
             contract: log.address,
             decimals: decs,
             from: from,
@@ -228,13 +228,13 @@ export const getTokenAndNFTDataFromBundleHash = async (
             });
           }
           const nftLog: NftType = {
-            amount: "1",
+            amount: 1n,
             contract: log.address,
             from: from,
             imageUrl: "noURLYetWinstonOrHansWillFix",
             name: "noNameYetWinstonWillFix",
             to: to,
-            tokenId: fromHex(tokenId, "string"),
+            tokenId: fromHex(tokenId, "bigint"),
             type: "erc721",
           };
           nftBuf.push(nftLog);
@@ -254,13 +254,13 @@ export const getTokenAndNFTDataFromBundleHash = async (
         );
 
         const nftLog: NftType = {
-          amount: 1n.toString(),
+          amount: 1n,
           contract: log.address,
           from: from,
           imageUrl: "noURLYetWinstonOrHansWillFix",
           name: "noNameYetWinstonWillFix",
           to: to,
-          tokenId: id.toString(),
+          tokenId: id,
           type: "erc1155",
         };
         nftBuf.push(nftLog);
@@ -287,13 +287,13 @@ export const getTokenAndNFTDataFromBundleHash = async (
             });
           }
           return {
-            amount: amt.toString(),
+            amount: amt,
             contract: log.address,
             from: from,
             imageUrl: "noURLYetWinstonOrHansWillFix",
             name: "noNameYetWinstonWillFix",
             to: to,
-            tokenId: id.toString(),
+            tokenId: id,
             type: "erc1155",
           };
         });

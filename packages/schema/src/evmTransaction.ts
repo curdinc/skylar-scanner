@@ -129,7 +129,7 @@ export const TokenSchema = z.object({
   decimals: z.number(),
   from: EthAddressSchema,
   to: EthAddressSchema,
-  amount: z.coerce.string(),
+  amount: z.bigint(),
 });
 export type TokenType = z.infer<typeof TokenSchema>;
 
@@ -143,8 +143,8 @@ export const NftSchema = z.object({
   name: z.string(),
   from: EthAddressSchema,
   to: EthAddressSchema,
-  amount: z.coerce.string(),
-  tokenId: z.coerce.string(),
+  amount: z.bigint(),
+  tokenId: z.bigint(),
   imageUrl: z.string(),
 });
 export type NftType = z.infer<typeof NftSchema>;
