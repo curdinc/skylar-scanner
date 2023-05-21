@@ -83,11 +83,11 @@ export const TransactionPage = () => {
           {transactionInfo && (
             <TransactionCost
               popoverDetails={`${transactionInfo.gasData.gasUsed} of ${transactionInfo.gasData.gasLimit} units @ ${transactionInfo.gasData.gasPrice} gwei / gas`}
-              copy={""}
               cost={formatCurrency(
                 transactionInfo.gasData.usdcPricePaid,
                 "USD",
               )}
+              copy={""}
               size="md"
             />
           )}

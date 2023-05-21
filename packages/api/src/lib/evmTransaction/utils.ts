@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { ethers } from "ethers";
-import { decodeAbiParameters, formatEther, formatGwei, fromHex } from "viem";
+import { decodeAbiParameters, formatGwei, formatUnits, fromHex } from "viem";
 import { z } from "zod";
 
 import {
@@ -22,6 +22,7 @@ import {
   SIGNATURES,
   USER_OPERATION_EVENT,
 } from "./constants";
+import { swapToUsd } from "./oneInchExchange";
 
 const bigNumberToBigInt = (bigNum: ethers.BigNumber): bigint => {
   return BigInt(bigNum.toString());
@@ -140,11 +141,21 @@ export const getUserOpInfoFromParentHash = async (
   const uop = uops.find((uop) => uop.sender === sender && uop.nonce === nonce);
 
   const gasPrice = actualGasCost / actualGasUsed;
+  const usdcSwapDetails = await swapToUsd({
+    chainId,
+    amount: actualGasCost,
+    contractAddress: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+  });
+  const transactionCost = formatUnits(
+    usdcSwapDetails.toTokenAmount,
+    usdcSwapDetails.toToken.decimals,
+  );
   const targetUop = {
+    sender,
     bundleHash: parentHash,
     beneficiary: beneficiary,
     timestamp: new Date(Number(block.timestamp * 1000n)),
-    transactionCost: formatEther(actualGasCost),
+    transactionCost: transactionCost.toString(),
     entryPointContract: txnReceipt.to,
     userOpHash,
     parsedUserOp: uop,

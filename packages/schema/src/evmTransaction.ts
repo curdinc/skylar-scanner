@@ -97,6 +97,7 @@ export const userOpSchema = z.object({
   parsedUserOp: ParseUserOpSchema,
   transactionCost: z.string(),
   userOpHash: EthHashSchema,
+  sender: EthAddressSchema,
   entryPointContract: EthAddressSchema,
   timestamp: z.date(),
   gasData: z.object({

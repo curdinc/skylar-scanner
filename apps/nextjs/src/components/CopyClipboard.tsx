@@ -1,3 +1,4 @@
+import { Link } from "@chakra-ui/next-js";
 import {
   Flex,
   Heading,
@@ -23,15 +24,17 @@ function CopyClipboard({ value, size, header, ...props }: props) {
       gap={`var(--chakra-fontSizes-${size})`}
       {...props}
     >
-      {header ? (
-        <Heading size={size} as={"h2"}>
-          {formatEvmAddress(value)}
-        </Heading>
-      ) : (
-        <Text fontSize={size} color={color}>
-          {formatEvmAddress(value)}
-        </Text>
-      )}
+      <Link href={`/parse/${value}`} style={{ textDecoration: "none" }}>
+        {header ? (
+          <Heading size={size} as={"h2"}>
+            {formatEvmAddress(value)}
+          </Heading>
+        ) : (
+          <Text fontSize={size} color={color}>
+            {formatEvmAddress(value)}
+          </Text>
+        )}
+      </Link>
 
       <CopyPopover content={value} size={size} />
     </Flex>

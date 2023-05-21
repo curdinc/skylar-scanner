@@ -27,19 +27,19 @@ export async function getUserOp(
   );
   console.log("uopInfo");
 
-  if (moreInfo) {
-    const tokenAndNFTData = await getTokenAndNFTDataFromBundleHash(
-      parentHash,
-      chainId,
-    );
-
-    console.log("tokenAndNFTData", tokenAndNFTData);
-
-    const targetData = tokenAndNFTData.find((payload) => {
-      return isEoaAddressEqual(payload.userOpHash, searchQuery);
-    });
-    return { ...uopInfo, ...targetData };
+  if (!moreInfo) {
+    return uopInfo;
   }
 
-  return uopInfo;
+  const tokenAndNFTData = await getTokenAndNFTDataFromBundleHash(
+    parentHash,
+    chainId,
+  );
+
+  console.log("tokenAndNFTData", tokenAndNFTData);
+
+  const targetData = tokenAndNFTData.find((payload) => {
+    return isEoaAddressEqual(payload.userOpHash, searchQuery);
+  });
+  return { ...uopInfo, ...targetData };
 }

@@ -26,8 +26,7 @@ export const evmTransactionRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { chainId, txnHash: searchQuery } = input;
       const res = await getUserOp(chainId, searchQuery, true);
-      console.log(res, "res");
-      return res;
+      return userOpDetailsSchema.parse(res);
     }),
 
   // testing

@@ -1,26 +1,29 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
-  Box,
   Center,
   Flex,
   Heading,
   Link,
   Spinner,
+  Stack,
   Text,
 } from "@chakra-ui/react";
+import { useAtom } from "jotai";
 import { formatUnits } from "viem";
 
 import {
-  EvmTransactionClientQuerySchema,
-  type transactionType,
+  EthHashSchema,
+  EvmChainIdSchema,
 } from "@skylarScan/schema/src/evmTransaction";
 
 import { api } from "~/utils/api";
 import { formatEvmAddress } from "~/utils/blockchain";
+import { formatCurrency } from "~/utils/currency";
 import { formatDateSince } from "~/utils/date";
 import CopyClipboard from "~/components/CopyClipboard";
 import TransactionCost from "~/components/TransactionCost";
+import { CurrentChainIdAtom } from "~/atoms/chain";
 import { AccordianTable } from "../../../Table";
 
 type UserOpDataDisplayType = {
@@ -49,68 +52,39 @@ export const UserOpPage = () => {
   const {
     query: { transactionHash, chainId },
   } = useRouter();
-  const [error, setError] = useState("");
-  const context = api.useContext();
-  const [userOpData, setUserOpData] = useState<transactionType | undefined>(
-    undefined,
-  );
+  const [currentChainId] = useAtom(CurrentChainIdAtom);
+  const {
+    data: userOpData,
+    isLoading,
+    error,
+  } = api.evmTransaction.userOpInfo.useQuery({
+    chainId: chainId ? EvmChainIdSchema.parse(chainId) : currentChainId,
+    txnHash: transactionHash ? EthHashSchema.parse(transactionHash) : "0x",
+  });
+
   const [userOpArray, setUserOpArray] = useState<UserOpDataDisplayType[]>([]);
   const [moreInfoArray, setMoreInfoArray] = useState<moreInfoType[]>([]);
   const [nftArray, setNftArray] = useState<nftType[]>([]);
   const [tokenArray, setTokenArray] = useState<tokenType[]>([]);
-  const [timeDiff, setTimeDiff] = useState("");
-  const isLoading = !userOpData && !error;
   const router = useRouter();
 
   useEffect(() => {
-    if (!chainId || !transactionHash) {
-      return;
-    }
-
-    const result = EvmTransactionClientQuerySchema.safeParse({
-      chainId,
-      txnHash: transactionHash,
-    });
-    if (result.success) {
-      console.log("check");
-
-      context.evmTransaction.userOpInfo
-        .fetch({
-          chainId: result.data.chainId,
-          txnHash: result.data.txnHash[0] ?? "0x",
-        })
-        .then((result) => {
-          setUserOpData(result);
-        })
-        .catch((e) => {
-          console.error("Error fetching user operation info", e);
-          if (e instanceof Error) {
-            setError(e.message);
-          }
-        });
-    } else {
-      setError("Invalid chain or transaction hash");
-    }
-  }, [chainId, transactionHash, context]);
-
-  const userOpMap = {
-    sender: "address",
-    nonce: "uint256",
-    initCode: "bytes",
-    callData: "bytes",
-    callGasLimit: "uint256",
-    verificationGasLimit: "uint256",
-    preVerificationGas: "uint256",
-    maxFeePerGas: "uint256",
-    maxPriorityFeePerGas: "uint256",
-    paymasterAndData: "bytes",
-    signature: "bytes",
-  };
-
-  useEffect(() => {
+    const userOpMap = {
+      sender: "address",
+      nonce: "uint256",
+      initCode: "bytes",
+      callData: "bytes",
+      callGasLimit: "uint256",
+      verificationGasLimit: "uint256",
+      preVerificationGas: "uint256",
+      maxFeePerGas: "uint256",
+      maxPriorityFeePerGas: "uint256",
+      paymasterAndData: "bytes",
+      signature: "bytes",
+    };
     const userDataArray: UserOpDataDisplayType[] = [];
     if (userOpData) {
-      Object.keys(userOpData.parsedInput).forEach((_item) => {
+      Object.keys(userOpData.parsedUserOp).forEach((_item) => {
         const item = _item as keyof typeof userOpData.parsedUserOp;
         const type = userOpMap[item];
         const data =
@@ -152,14 +126,15 @@ export const UserOpPage = () => {
           Data: userOpData.entryPointContract,
         },
         {
-          Name: "Gas Data",
+          Name: "Gas Data / gas",
           Data:
             "Base fee of " +
             Number(userOpData.gasData.baseFeePerGas).toFixed(2).toString() +
             " Gwei with " +
             Number(userOpData.gasData.tipFeePerGas).toFixed(2).toString() +
             " Gwei of tip, capped at " +
-            Number(userOpData.gasData.maxFeePerGas).toFixed(2).toString(),
+            Number(userOpData.gasData.maxFeePerGas).toFixed(2).toString() +
+            " Gwei",
         },
       ]);
 
@@ -185,10 +160,8 @@ export const UserOpPage = () => {
         });
       });
       setTokenArray(newTokenArray);
-
-      setTimeDiff(formatDateSince(userOpData.timestamp.getTime()));
     }
-  }, [userOpData]);
+  }, [router, userOpData]);
 
   if (isLoading) {
     return (
@@ -199,36 +172,31 @@ export const UserOpPage = () => {
   }
 
   if (error) {
-    return <Center flexGrow={1}>{error}</Center>;
+    return <Center flexGrow={1}>{error.message}</Center>;
   }
 
   return (
-    <Box
-      width="100%"
-      padding="10"
-      sx={{ display: "flex", flexDirection: "column", gap: "6" }}
-    >
-      <CopyClipboard
-        value={userOpData?.userOpHash ? userOpData?.userOpHash : ""}
-        size={"2xl"}
-        header
-      />
+    <Stack spacing={10} width="full" padding="10">
+      <Stack>
+        <CopyClipboard value={userOpData.userOpHash} size={"2xl"} header />
 
-      {userOpData && (
-        <Text marginTop={"-4"}>
-          UserOp submitted {timeDiff} ago by SCW address
+        <Text>
+          User Operation submitted{" "}
+          {formatDateSince(userOpData.timestamp.getTime())} ago by{" "}
+          <CopyClipboard
+            value={userOpData.sender}
+            size="md"
+            display={"inline-flex"}
+          />
         </Text>
-      )}
+      </Stack>
 
-      <Box width={"100%"} maxWidth={"lg"}>
+      <Stack width={"100%"} maxWidth={"lg"} spacing={5}>
         <Flex justifyContent="space-between" alignItems="center">
           <Heading size="md" fontWeight="semibold">
             Bundle Hash
           </Heading>
-          <CopyClipboard
-            value={userOpData?.bundleHash ? userOpData?.bundleHash : ""}
-            size="md"
-          />
+          <CopyClipboard value={userOpData.bundleHash} size="md" />
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
           <Heading size="md" fontWeight="semibold">
@@ -242,24 +210,32 @@ export const UserOpPage = () => {
               } @ ${Number(userOpData?.gasData.gasPrice).toFixed(
                 2,
               )} gwei / gas. Sponsored by ${formatEvmAddress(
-                userOpData.parsedUserOp.paymasterAndData &&
-                  userOpData.parsedUserOp.paymasterAndData.slice(0, 42),
+                userOpData.parsedUserOp.paymasterAndData.slice(0, 42),
               )}`}
-              copy={
-                userOpData.parsedUserOp.paymasterAndData &&
-                userOpData.parsedUserOp.paymasterAndData.slice(0, 42)
-              }
-              cost={Number(userOpData?.transactionCost).toFixed(
-                3 -
-                  Math.floor(
-                    Math.log(Number(userOpData?.transactionCost)) /
-                      Math.log(10),
-                  ),
-              )}
+              copy={userOpData.parsedUserOp.paymasterAndData.slice(0, 42)}
+              cost={formatCurrency(userOpData.transactionCost, "USD")}
             />
           )}
         </Flex>
-      </Box>
+      </Stack>
+
+      {/* NFTs */}
+      {userOpData.nfts && userOpData.nfts.length && (
+        <AccordianTable
+          headers={["From", "To", "NFT", "Amount"]}
+          title={`NFTs [ ${userOpData.nfts.length} ]`}
+          data={nftArray}
+        />
+      )}
+
+      {/* Tokens */}
+      {userOpData.tokens && userOpData.tokens.length > 0 && (
+        <AccordianTable
+          headers={["From", "To", "Amount"]}
+          title={`Tokens [ ${userOpData.tokens.length} ]`}
+          data={tokenArray}
+        />
+      )}
 
       {/* User OP  */}
       <AccordianTable
@@ -270,32 +246,6 @@ export const UserOpPage = () => {
 
       {/* More info */}
       <AccordianTable headers={[]} title="More info" data={moreInfoArray} />
-
-      {/* NFTs */}
-      {userOpData && (
-        <AccordianTable
-          headers={
-            userOpData?.nfts && userOpData?.nfts.length > 0
-              ? ["From", "To", "NFT", "Amount"]
-              : []
-          }
-          title={`NFTs [ ${userOpData?.nfts.length} ]`}
-          data={nftArray}
-        />
-      )}
-
-      {/* Tokens */}
-      {userOpData && (
-        <AccordianTable
-          headers={
-            userOpData?.tokens && userOpData?.tokens.length > 0
-              ? ["From", "To", "Amount"]
-              : []
-          }
-          title={`Tokens [ ${userOpData?.tokens.length} ]`}
-          data={tokenArray}
-        />
-      )}
-    </Box>
+    </Stack>
   );
 };

@@ -19,7 +19,7 @@ interface props {
   popoverDetails: string;
   copy: string;
   size: string;
-  cost: string;
+  cost?: string;
 }
 
 function TransactionCost({ popoverDetails, copy, size, cost }: props) {
@@ -63,7 +63,6 @@ function TransactionCost({ popoverDetails, copy, size, cost }: props) {
                 noOfLines={3}
                 textAlign="center"
                 width={"fit-content"}
-                sx={{ textWrap: "balance" }}
               >
                 {popoverDetails}
               </Text>
