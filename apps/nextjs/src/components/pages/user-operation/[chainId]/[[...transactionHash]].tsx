@@ -64,15 +64,20 @@ export const UserOpPage = () => {
       txnHash: transactionHash,
     });
     if (result.success) {
+      console.log("check");
+
       context.evmTransaction.userOpInfo
         .fetch({
           chainId: result.data.chainId,
           txnHash: result.data.txnHash[0] ?? "0x",
         })
         .then((result) => {
+          console.log("update");
+
           setUserOpData(result);
         })
         .catch((e) => {
+          console.log("update");
           console.error("Error fetching user operation info", e);
           if (e instanceof Error) {
             setError(e.message);

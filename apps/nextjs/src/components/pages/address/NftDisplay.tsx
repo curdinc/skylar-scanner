@@ -38,15 +38,25 @@ export const NftDisplay = ({
   }
 
   const formattedData = nftData?.nfts.ownedNfts.map((ownedNft) => {
-    return {
-      imageUrl: ownedNft?.media[0]?.gateway,
-      name: ownedNft?.title,
-      price: ownedNft?.contract.openSea?.floorPrice,
-    };
+    if (
+      ownedNft?.media[0]?.gateway === undefined ||
+      ownedNft?.title === undefined ||
+      ownedNft?.title === ""
+    ) {
+      return null;
+    } else
+      return {
+        imageUrl: ownedNft?.media[0]?.gateway,
+        name: ownedNft?.title,
+        price: ownedNft?.contract.openSea?.floorPrice,
+      };
   });
+
+  const filteredData = formattedData?.filter((n) => n);
+  console.log(filteredData);
   return (
     <Grid templateColumns="repeat(5, 1fr)" gap={4}>
-      {formattedData?.map((nft) => (
+      {filteredData?.map((nft) => (
         <Card imageUrl={nft.imageUrl} name={nft.name} price={nft.price} />
       ))}
     </Grid>

@@ -4,7 +4,7 @@ import { Center, Spinner } from "@chakra-ui/react";
 
 import {
   EvmTransactionClientQuerySchema,
-  type EvmTransaction,
+  type transactionType,
 } from "@skylarScan/schema/src/evmTransaction";
 
 import { api } from "~/utils/api";
@@ -17,7 +17,7 @@ export const BundleTransactionPage = () => {
   } = useRouter();
   const [error, setError] = useState("");
   const context = api.useContext();
-  const [userOpData, setUserOpData] = useState<EvmTransaction | undefined>(
+  const [userOpData, setUserOpData] = useState<transactionType | undefined>(
     undefined,
   );
   const isLoading = !userOpData && !error;
