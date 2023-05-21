@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { decodeAbiParameters, type Log } from "viem";
+import { decodeAbiParameters, fromHex } from "viem";
 
 import {
   userOpLogSchema,
@@ -7,12 +7,15 @@ import {
   type EthAddressType,
   type EthHashType,
   type EvmChainIdType,
+  type NftType,
+  type TokenType,
 } from "@skylarScan/schema/src/evmTransaction";
 
 import { getViemClient } from "./client";
 import {
   ENTRY_POINT_CONTRACT_ADDRESSES,
   HANDLE_OPS_INPUT,
+  PARSER_ABI,
   SIGNATURES,
   USER_OPERATION_EVENT,
 } from "./constants";
@@ -118,28 +121,28 @@ export const getTokenAndNFTDataFromBundleHash = async (
   bundleHash: EthHashType,
   chainId: EvmChainIdType,
 ) => {
-  console.log("first");
   const client = getViemClient(chainId);
-  console.log("3");
   const txnReceipt = await client.getTransactionReceipt({ hash: bundleHash });
 
   const logs = txnReceipt.logs;
   const returnArray = new Array<{
     userOpHash: EthHashType;
-    logs: Log<bigint, number>[];
+    tokens: TokenType[];
+    nfts: NftType[];
   }>();
 
-  console.log("1");
-  logs.forEach((log) => {
-    const buf = new Array<Log<bigint, number>>();
+  const tokenBuf = new Array<TokenType>();
+  const nftBuf = new Array<NftType>();
+
+  for (const log of logs) {
     if (log.topics.length === 0) {
-      return;
+      continue;
     }
     switch (log.topics[0]) {
       case SIGNATURES.USER_OPERATION: {
         if (log.topics.length < 2 || log.topics[1] === undefined) {
           console.error(
-            "Should never reach here there must be a weir collision.",
+            "Should never reach here there must be a weird collision.",
           );
           throw new TRPCError({
             code: "INTERNAL_SERVER_ERROR",
@@ -148,23 +151,128 @@ export const getTokenAndNFTDataFromBundleHash = async (
         }
         returnArray.push({
           userOpHash: log.topics[1],
-          logs: [...buf],
+          tokens: [...tokenBuf],
+          nfts: [...nftBuf],
         });
+        tokenBuf.splice(0);
+        nftBuf.splice(0);
       }
       case SIGNATURES.ERC721_TRANSFER_OR_ERC20_TRANSFER: {
-        buf.push(log);
+        // Check whether it is an ERC20 or ERC721
+        try {
+          const decs = await client.readContract({
+            address: log.address,
+            abi: PARSER_ABI,
+            functionName: "decimals",
+          });
+          // we have an ERC20
+          // FIXME: bad code
+          const from: `0x${string}` = `0x${log.topics[1]?.slice(-40)}`;
+          const to: `0x${string}` = `0x${log.topics[2]?.slice(-40)}`;
+
+          console.log(from, to);
+
+          const tokenLog = {
+            amount: fromHex(log.data, "bigint"),
+            contract: log.address,
+            decimals: decs,
+            from: from,
+            name: "noNameYetWinstonWillFix",
+            to: to,
+            type: "erc20",
+          } satisfies TokenType;
+          tokenBuf.push(tokenLog);
+        } catch {
+          //Assume this is an ERC721
+          //FIXME: bad code
+          const from: `0x${string}` = `0x${log.topics[1]?.slice(-40)}`;
+          const to: `0x${string}` = `0x${log.topics[2]?.slice(-40)}`;
+          const tokenId = log.topics[3];
+
+          if (tokenId === undefined) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Invalid tokenId",
+            });
+          }
+          const nftLog: NftType = {
+            amount: 1n,
+            contract: log.address,
+            from: from,
+            imageUrl: "noURLYetWinstonOrHansWillFix",
+            name: "noNameYetWinstonWillFix",
+            to: to,
+            tokenId: fromHex(tokenId, "bigint"),
+            type: "erc721",
+          };
+          nftBuf.push(nftLog);
+        }
         break;
       }
       case SIGNATURES.ERC1155_SINGLE_TRANSFER: {
-        buf.push(log);
+        //FIXME: bad code
+        const from: `0x${string}` = `0x${log.topics[2]?.slice(-40)}`;
+        const to: `0x${string}` = `0x${log.topics[3]?.slice(-40)}`;
+
+        const [id] = decodeAbiParameters(
+          [
+            { name: "id", type: "uint" },
+            { name: "value", type: "uint" },
+          ],
+          log.data,
+        );
+
+        const nftLog: NftType = {
+          amount: 1n,
+          contract: log.address,
+          from: from,
+          imageUrl: "noURLYetWinstonOrHansWillFix",
+          name: "noNameYetWinstonWillFix",
+          to: to,
+          tokenId: id,
+          type: "erc1155",
+        };
+        nftBuf.push(nftLog);
         break;
       }
       case SIGNATURES.ERC1155_MULTIPLE_TRANSFER: {
-        buf.push(log);
+        //FIXME: bad code
+        const from: `0x${string}` = `0x${log.topics[2]?.slice(-40)}`;
+        const to: `0x${string}` = `0x${log.topics[3]?.slice(-40)}`;
+
+        const [ids, values] = decodeAbiParameters(
+          [
+            { name: "ids", type: "uint[]" },
+            { name: "values", type: "uint[]" },
+          ],
+          log.data,
+        );
+
+        const nftLog: NftType[] = ids.map((id, iter): NftType => {
+          const amt = values[iter];
+          if (amt === undefined) {
+            throw new TRPCError({
+              code: "INTERNAL_SERVER_ERROR",
+              message: "Invalid NFT",
+            });
+          }
+          return {
+            amount: amt,
+            contract: log.address,
+            from: from,
+            imageUrl: "noURLYetWinstonOrHansWillFix",
+            name: "noNameYetWinstonWillFix",
+            to: to,
+            tokenId: id,
+            type: "erc1155",
+          };
+        });
+        nftBuf.push(...nftLog);
         break;
       }
     }
-  });
+  }
+
   return returnArray;
 };
 

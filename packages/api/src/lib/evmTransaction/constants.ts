@@ -1,4 +1,4 @@
-import { parseAbiItem, parseAbiParameters } from "viem";
+import { parseAbi, parseAbiItem, parseAbiParameters } from "viem";
 
 import { type EvmChainIdType } from "@skylarScan/schema";
 import { type EthHashType } from "@skylarScan/schema/src/evmTransaction";
@@ -12,6 +12,12 @@ export const USER_OPERATION_EVENT = parseAbiItem(
 export const HANDLE_OPS_INPUT = parseAbiParameters(
   "(address sender, uint256 nonce, bytes initCode, bytes callData, uint256 callGasLimit, uint256 verificationGasLimit, uint256 preVerificationGas, uint256 maxFeePerGas, uint256 maxPriorityFeePerGas, bytes paymasterAndData, bytes signature)[] calldata ops, address beneficiary",
 );
+
+export const PARSER_ABI = parseAbi([
+  "function decimals() view returns (uint8)",
+  "function name() view returns (string memory)",
+  "function symbol() view returns (string memory)",
+]);
 
 export const SIGNATURES: Record<string, EthHashType> = {
   USER_OPERATION:

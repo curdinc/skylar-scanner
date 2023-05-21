@@ -42,7 +42,7 @@ export type EvmTransactionClientQueryType = z.infer<
 >;
 
 export const EvmTransactionQuerySchema = z.object({
-  txnHash: EthHashSchema,
+  txnHash: _EthHashSchema,
   chainId: EvmChainIdSchema,
 });
 export type EvmTransactionQueryType = z.infer<typeof EvmTransactionQuerySchema>;
@@ -99,7 +99,7 @@ export const TokenSchema = z.object({
   decimals: z.number(),
   from: EthAddressSchema,
   to: EthAddressSchema,
-  amount: z.bigint(),
+  amount: z.coerce.string(),
 });
 export type TokenType = z.infer<typeof TokenSchema>;
 
@@ -113,8 +113,8 @@ export const NftSchema = z.object({
   name: z.string(),
   from: EthAddressSchema,
   to: EthAddressSchema,
-  amount: z.bigint(),
-  tokenId: z.bigint(),
+  amount: z.coerce.string(),
+  tokenId: z.coerce.string(),
   imageUrl: z.string(),
 });
 export type NftType = z.infer<typeof NftSchema>;
@@ -125,3 +125,9 @@ export const AssetLogsSchema = z.union([
 ]);
 
 export type AssetLogsType = z.infer<typeof AssetLogsSchema>;
+
+export const userOpInfoPayloadSchema = z.object({
+  userOpHash: EthHashSchema,
+  nfts: NftSchema.array(),
+  tokens: TokenSchema.array(),
+});
