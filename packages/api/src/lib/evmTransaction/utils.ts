@@ -48,7 +48,6 @@ export const getUserOpLogsFromSender = async (
   return filter;
 };
 
-const logs = await client.getFilterLogs({ filter });
 // params should already should be validated before called so we just crash
 export const getUserOpLogFromOpHash = async (
   opHash: string,
