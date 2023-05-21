@@ -55,7 +55,7 @@ export const TransactionPage = () => {
         <CopyClipboard value={transactionInfo.txnHash} size={"2xl"} header />
 
         {transactionInfo && (
-          <Text mt={"-4"}>
+          <Text>
             Transaction submitted{" "}
             {formatDateSince(transactionInfo.timestamp.getTime())} ago by{" "}
             <CopyClipboard
