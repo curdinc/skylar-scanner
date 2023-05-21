@@ -1,25 +1,39 @@
 import React from "react";
-import { Box, Image, Text } from "@chakra-ui/react";
+import { Box, Center, Image, Text } from "@chakra-ui/react";
 
 interface ICardProps {
   imageUrl: string;
   name: string;
   price: string;
-  bestOffer: string;
+  imageHeight: string;
+  imageWidth: string;
+  imageFit: string;
 }
 
-const Card: React.FC<ICardProps> = ({ imageUrl, name, price, bestOffer }) => {
+const Card: React.FC<ICardProps> = ({
+  imageUrl,
+  name,
+  price,
+  imageHeight = "200px",
+  imageWidth = "auto",
+  imageFit = "contain",
+}) => {
   return (
     <Box borderWidth="1px" borderRadius="md" overflow="hidden" boxShadow="sm">
-      <Image src={imageUrl} alt="NFT" />
+      <Center>
+        <Image
+          src={imageUrl}
+          alt="NFT"
+          height={imageHeight}
+          width={imageWidth}
+          objectFit={imageFit}
+        />
+      </Center>
       <Box p={4}>
         <Text fontSize="lg" fontWeight="bold">
           {name}
         </Text>
         <Text fontSize="md">{price}</Text>
-        <Text fontSize="sm" color="gray.500">
-          {bestOffer}
-        </Text>
       </Box>
     </Box>
   );

@@ -1,4 +1,4 @@
-import { Flex, Heading, Text } from "@chakra-ui/react";
+import { Flex, Heading, Text, useColorModeValue } from "@chakra-ui/react";
 
 import { formatEvmAddress } from "~/utils/blockchain";
 import { CopyPopover } from "~/components/CopyIcon";
@@ -10,6 +10,7 @@ interface props {
 }
 
 function CopyClipboard({ value, size, header }: props) {
+  const color = useColorModeValue("gray.500", "gray.400");
   return (
     <Flex alignItems="center" gap={`var(--chakra-fontSizes-${size})`}>
       {header ? (
@@ -17,7 +18,7 @@ function CopyClipboard({ value, size, header }: props) {
           {formatEvmAddress(value)}
         </Heading>
       ) : (
-        <Text fontSize={size} color="gray.400">
+        <Text fontSize={size} color={color}>
           {formatEvmAddress(value)}
         </Text>
       )}

@@ -8,30 +8,24 @@ import {
   PopoverContent,
   PopoverTrigger,
   Text,
+  useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import { AlertCircle } from "lucide-react";
 
-import { type userOpType } from "@skylarScan/schema/src/evmTransaction";
-
-import { formatEvmAddress } from "~/utils/blockchain";
 import { CopyPopover, IconDefault } from "~/components/CopyIcon";
 
 interface props {
-  data: userOpType;
+  popoverDetails: string;
+  copy: string;
   size: string;
+  cost: string;
 }
 
-function TransactionCost({ data, size }: props) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const value = Number(data?.transactionCost);
-  const valueRounded = value.toFixed(
-    3 - Math.floor(Math.log(value) / Math.log(10)),
-  );
+function TransactionCost({ popoverDetails, copy, size, cost }: props) {
+  const { isOpen } = useDisclosure();
 
-  const paymasterValue =
-    data.parsedUserOp.paymasterAndData &&
-    data.parsedUserOp.paymasterAndData.slice(0, 42);
+  const color = useColorModeValue("gray.500", "gray.400");
 
   return (
     <Flex
@@ -39,8 +33,8 @@ function TransactionCost({ data, size }: props) {
       gap={`var(--chakra-fontSizes-${size})`}
       marginTop="0"
     >
-      <Text fontSize={size} color="gray.400">
-        ${valueRounded}ETH
+      <Text fontSize={size} color={color}>
+        ${cost}ETH
       </Text>
 
       <Popover>
@@ -70,15 +64,11 @@ function TransactionCost({ data, size }: props) {
                 textAlign="center"
                 width={"fit-content"}
               >
-                {`${data?.gasData.gasUsed} out of ${
-                  data?.gasData.gasLimit
-                } @ ${Number(data?.gasData.gasPrice).toFixed(
-                  2,
-                )} gwei / gas. Sponsored by ${formatEvmAddress(
-                  paymasterValue,
-                )}`}
+                {popoverDetails}
               </Text>
-              <CopyPopover content={paymasterValue} size={size} />
+              {copy && copy.length > 0 && (
+                <CopyPopover content={copy} size={size} />
+              )}
             </Flex>
           </PopoverBody>
         </Box>

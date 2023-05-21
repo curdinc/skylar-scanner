@@ -24,6 +24,8 @@ export function DataTable({
   data: Array<any>;
 }) {
   const borderColor = useColorModeValue("gray.200", "darkColor.600");
+  const color = useColorModeValue("gray.500", "gray.400");
+  const colorHeader = useColorModeValue("gray.600", "gray.300");
   return (
     <TableContainer>
       <Table variant="simple">
@@ -31,7 +33,7 @@ export function DataTable({
           <Thead>
             <Tr>
               {headers.map((header) => (
-                <Th key={header} borderColor={borderColor} color="gray.300">
+                <Th key={header} borderColor={borderColor} color={colorHeader}>
                   {header}
                 </Th>
               ))}
@@ -42,7 +44,7 @@ export function DataTable({
           {data.map((item, index) => (
             <Tr key={index}>
               {Object.keys(item).map((key) => (
-                <Td key={key} borderColor={borderColor} color="gray.400">
+                <Td key={key} borderColor={borderColor} color={color}>
                   {typeof item[key] === "string" ||
                   typeof item[key] === "bigint"
                     ? item[key].toString()

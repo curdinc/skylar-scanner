@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Center, Spinner } from "@chakra-ui/react";
+import { Box, Center, Flex, Heading, Spinner } from "@chakra-ui/react";
 
 import {
   EvmTransactionClientQuerySchema,
@@ -9,7 +9,7 @@ import {
 
 import { api } from "~/utils/api";
 import CopyClipboard from "~/components/CopyClipboard";
-import { DataTable } from "../../../Table";
+import TransactionCost from "~/components/TransactionCost";
 
 export const TransactionPage = () => {
   const {
@@ -21,6 +21,8 @@ export const TransactionPage = () => {
     EvmTransaction | undefined
   >(undefined);
   const isLoading = !transactionInfo && !error;
+
+  const [timeDiff, setTimeDiff] = useState("");
 
   useEffect(() => {
     if (!chainId || !transactionHash) {
@@ -50,6 +52,10 @@ export const TransactionPage = () => {
     }
   }, [chainId, transactionHash, context]);
 
+  useEffect(() => {
+    // setTimeDiff(formatDateSince(transactionInfo.timestamp.getTime()));
+  }, []);
+
   if (isLoading) {
     return (
       <Center flexGrow={1}>
@@ -62,16 +68,52 @@ export const TransactionPage = () => {
     return <Center flexGrow={1}>{error}</Center>;
   }
 
+  console.log(transactionInfo);
+
   return (
-    <div>
-      <DataTable
-        headers={["test", "Test2"]}
-        data={[
-          { name: "Maanav", age: "3" },
-          { name: "Hans", age: "1" },
-        ]}
+    <Box
+      width="100%"
+      padding="10"
+      sx={{ display: "flex", flexDirection: "column", gap: "6" }}
+    >
+      <CopyClipboard
+        value={transactionInfo?.hash ? transactionInfo?.hash : ""}
+        size={"2xl"}
+        header
       />
-      <CopyClipboard value={"0x1231hj23j3j3jk3awwdaawd23123"} size="6xl" />
-    </div>
+
+      {/* TODO add timestamp */}
+      {/* {transactionInfo && (
+        <Text marginTop={"-4"}>
+          UserOp submitted {timeDiff} ago by SCW address
+        </Text>
+      )} */}
+
+      <Box width={"100%"} maxWidth={"lg"}>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Heading size="md" fontWeight="semibold">
+            Bundle Hash
+          </Heading>
+          <CopyClipboard
+            value={transactionInfo?.to ? transactionInfo?.to : ""}
+            size="md"
+          />
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Heading size="md" fontWeight="semibold">
+            Transaction cost
+          </Heading>
+          {transactionInfo && (
+            // TODO add in cost
+            <TransactionCost
+              popoverDetails={`__ of __ units @ ${transactionInfo.gasPrice} gwei / gas`}
+              copy={""}
+              cost={"SOME VALUE LOL"}
+              size="md"
+            />
+          )}
+        </Flex>
+      </Box>
+    </Box>
   );
 };

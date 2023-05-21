@@ -12,10 +12,11 @@ import {
 
 import {
   EvmTransactionClientQuerySchema,
-  type userOpType,
+  type userOpDetailsType,
 } from "@skylarScan/schema/src/evmTransaction";
 
 import { api } from "~/utils/api";
+import { formatEvmAddress } from "~/utils/blockchain";
 import { formatDateSince } from "~/utils/date";
 import CopyClipboard from "~/components/CopyClipboard";
 import TransactionCost from "~/components/TransactionCost";
@@ -30,21 +31,28 @@ type moreInfoType = {
   Name: string;
   Data: string;
 };
+
+type nftType = {
+  From: string;
+  To: string;
+  NFT: string;
+  Amount: string;
+};
 export const UserOpPage = () => {
   const {
     query: { transactionHash, chainId },
   } = useRouter();
   const [error, setError] = useState("");
   const context = api.useContext();
-  const [userOpData, setUserOpData] = useState<userOpType | undefined>(
+  const [userOpData, setUserOpData] = useState<userOpDetailsType | undefined>(
     undefined,
   );
   const [userOpArray, setUserOpArray] = useState<UserOpDataDisplayType[]>([]);
   const [moreInfoArray, setMoreInfoArray] = useState<moreInfoType[]>([]);
+  const [nftArray, setNftArray] = useState<nftType[]>([]);
   const [timeDiff, setTimeDiff] = useState("");
   const isLoading = !userOpData && !error;
   const router = useRouter();
-  const curDate = new Date().getTime();
 
   useEffect(() => {
     if (!chainId || !transactionHash) {
@@ -100,9 +108,14 @@ export const UserOpPage = () => {
             <Link
               color="cyan.600"
               onClick={() => {
-                router.push(`/parse/${type}`).catch((e) => {
-                  console.log(`Error routing to parse/${type}: `, e);
-                });
+                router
+                  .push(`/parse/${userOpData.parsedUserOp[item]}`)
+                  .catch((e) => {
+                    console.log(
+                      `Error routing to parse/${userOpData.parsedUserOp[item]}: `,
+                      e,
+                    );
+                  });
               }}
             >
               {userOpData.parsedUserOp[item].toString()}
@@ -140,6 +153,17 @@ export const UserOpPage = () => {
         },
       ]);
 
+      const newNFTArray: nftType[] = [];
+      userOpData.nfts.forEach((item) => {
+        newNFTArray.push({
+          From: item.from,
+          To: item.to,
+          NFT: item.name,
+          Amount: item.amount,
+        });
+      });
+      setNftArray(newNFTArray);
+
       setTimeDiff(formatDateSince(userOpData.timestamp.getTime()));
     }
   }, [userOpData]);
@@ -173,20 +197,44 @@ export const UserOpPage = () => {
           UserOp submitted {timeDiff} ago by SCW address
         </Text>
       )}
-
       <Box width={"100%"} maxWidth={"lg"}>
         <Flex justifyContent="space-between" alignItems="center">
           <Heading size="md" fontWeight="semibold">
             Bundle Hash
           </Heading>
-          {/* TODO fill in */}
-          <CopyClipboard value={"0x1231hj23j3j3jk3awwdaawd23123"} size="md" />
+          <CopyClipboard
+            value={userOpData?.bundleHash ? userOpData?.bundleHash : ""}
+            size="md"
+          />
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
           <Heading size="md" fontWeight="semibold">
             Transaction cost
           </Heading>
-          {userOpData && <TransactionCost data={userOpData} size="md" />}
+          {userOpData && (
+            <TransactionCost
+              size="md"
+              popoverDetails={`${userOpData?.gasData.gasUsed} out of ${
+                userOpData?.gasData.gasLimit
+              } @ ${Number(userOpData?.gasData.gasPrice).toFixed(
+                2,
+              )} gwei / gas. Sponsored by ${formatEvmAddress(
+                userOpData.parsedUserOp.paymasterAndData &&
+                  userOpData.parsedUserOp.paymasterAndData.slice(0, 42),
+              )}`}
+              copy={
+                userOpData.parsedUserOp.paymasterAndData &&
+                userOpData.parsedUserOp.paymasterAndData.slice(0, 42)
+              }
+              cost={Number(userOpData?.transactionCost).toFixed(
+                3 -
+                  Math.floor(
+                    Math.log(Number(userOpData?.transactionCost)) /
+                      Math.log(10),
+                  ),
+              )}
+            />
+          )}
         </Flex>
       </Box>
 
@@ -199,6 +247,22 @@ export const UserOpPage = () => {
 
       {/* More info */}
       <AccordianTable headers={[]} title="More info" data={moreInfoArray} />
+
+      {/* NFTs */}
+      {console.log(userOpData?.nfts)}
+      {userOpData && (
+        <AccordianTable
+          headers={
+            userOpData?.nfts && userOpData?.nfts.length > 0
+              ? ["From", "To", "NFT", "Amount"]
+              : []
+          }
+          title={`NFTs ${
+            userOpData?.nfts.length > 0 ? userOpData?.nfts.length : ""
+          }`}
+          data={nftArray}
+        />
+      )}
     </Box>
   );
 };
