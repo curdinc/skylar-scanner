@@ -4,6 +4,7 @@ import {
   Box,
   Flex,
   Icon,
+  Kbd,
   Text,
   useColorMode,
   useColorModeValue,
@@ -20,7 +21,7 @@ import {
   useMatches,
   type Action,
 } from "kbar";
-import { Search } from "lucide-react";
+import { Moon, Search, SunMedium as Sun } from "lucide-react";
 
 import { parseQuerySchema } from "@skylarScan/schema/src/addressDetails";
 
@@ -92,13 +93,17 @@ export function RenderResults() {
         ) : (
           <Flex
             alignItems={"center"}
+            justifyContent={"space-between"}
             width="full"
             px={8}
             py={4}
             bg={active ? bgcolor : "transparent"}
           >
-            {item.icon}
-            <Text>{item.name}</Text>
+            <Flex alignItems={"center"}>
+              {item.icon}
+              <Text>{item.name}</Text>
+            </Flex>
+            {item.shortcut && <Kbd> {item.shortcut.join(" + ")}</Kbd>}
           </Flex>
         );
       }}
@@ -158,6 +163,7 @@ export function KBarSearchProvider({
       shortcut: ["d"],
       keywords: "dark",
       section: "Theme",
+      icon: <Icon as={Moon} size="20" mr={2} />,
       perform: () => setColorMode("dark"),
     },
     {
@@ -166,6 +172,7 @@ export function KBarSearchProvider({
       shortcut: ["l"],
       keywords: "light blind",
       section: "Theme",
+      icon: <Icon as={Sun} size="20" mr={2} />,
       perform: () => setColorMode("light"),
     },
   ];

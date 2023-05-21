@@ -1,6 +1,16 @@
+import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { Center, Flex, Heading, Spinner, Stack, Text } from "@chakra-ui/react";
+import {
+  Center,
+  Flex,
+  Heading,
+  Spinner,
+  Stack,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
 import { useAtom } from "jotai";
+import { Priority, useKBar } from "kbar";
 
 import {
   EthHashSchema,
@@ -20,7 +30,9 @@ export const TransactionPage = () => {
   const {
     query: { transactionHash, chainId },
   } = useRouter();
+  const { query } = useKBar();
   const [currentChainId] = useAtom(CurrentChainIdAtom);
+  const toast = useToast();
   const {
     data: transactionInfo,
     isLoading,
@@ -34,6 +46,108 @@ export const TransactionPage = () => {
       enabled: !!chainId && !!transactionHash,
     },
   );
+
+  useEffect(() => {
+    query.registerActions([
+      {
+        id: "Copy Transaction Hash",
+        name: "Copy Transaction Hash",
+        shortcut: ["c", "h"],
+        keywords: "copy transaction hash",
+        priority: Priority.HIGH,
+        section: "Transaction",
+        perform: () => {
+          navigator.clipboard
+            .writeText(transactionInfo?.txnHash || "")
+            .catch((e) => {
+              console.error(
+                "ERROR: something went wrong copying to clipboard: ",
+                e,
+              );
+            });
+          toast({
+            title: "Copied transaction hash",
+            status: "success",
+            duration: 2000,
+            isClosable: true,
+          });
+        },
+      },
+      {
+        id: "Copy From Address",
+        name: "Copy From Address",
+        shortcut: ["c", "f"],
+        keywords: "copy From address",
+        priority: Priority.HIGH,
+        section: "Transaction",
+        perform: () => {
+          navigator.clipboard
+            .writeText(transactionInfo?.from || "")
+            .catch((e) => {
+              console.error(
+                "ERROR: something went wrong copying to clipboard: ",
+                e,
+              );
+            });
+          toast({
+            title: "Copied From hash",
+            status: "success",
+            duration: 2000,
+            isClosable: true,
+          });
+        },
+      },
+
+      {
+        id: "Copy To Address",
+        name: "Copy To Address",
+        shortcut: ["c", "t"],
+        keywords: "copy to address",
+        priority: Priority.HIGH,
+        section: "Transaction",
+        perform: () => {
+          navigator.clipboard
+            .writeText(transactionInfo?.to || "")
+            .catch((e) => {
+              console.error(
+                "ERROR: something went wrong copying to clipboard: ",
+                e,
+              );
+            });
+          toast({
+            title: "Copied To address",
+            status: "success",
+            duration: 2000,
+            isClosable: true,
+          });
+        },
+      },
+      {
+        id: "Copy Input Data",
+        name: "Copy Input Data",
+        shortcut: ["c", "i"],
+        keywords: "copy transaction input data",
+        priority: Priority.HIGH,
+        section: "Transaction",
+        perform: () => {
+          navigator.clipboard
+            .writeText(transactionInfo?.rawInput || "")
+            .catch((e) => {
+              console.error(
+                "ERROR: something went wrong copying to clipboard: ",
+                e,
+              );
+            });
+          toast({
+            title: "Copied input data",
+            status: "success",
+            duration: 2000,
+            isClosable: true,
+          });
+        },
+      },
+    ]);
+  }, [transactionInfo, query, toast]);
 
   if (isLoading) {
     return (
