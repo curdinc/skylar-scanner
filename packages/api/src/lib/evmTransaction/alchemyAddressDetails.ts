@@ -92,3 +92,22 @@ export async function getAddressDetails(address: EthAddressType) {
     return;
   }
 }
+
+// NOT FREE :'(
+// export async function getTransactionTraces(
+//   txnHash: EthHashType,
+//   chainId: EvmChainIdType,
+// ) {
+//   const config = {
+//     apiKey: env.ALCHEMY_KEY,
+//     network: networkToChainId[chainId],
+//   };
+//   const alchemy = new Alchemy(config);
+//   const traces = await alchemy.debug.traceTransaction(txnHash, {
+//     type: DebugTracerType.CALL_TRACER,
+//     onlyTopCall: false,
+//   });
+
+//   console.log(traces);
+//   return "";
+// }

@@ -1,8 +1,17 @@
 import { type EvmChainIdType } from "@skylarScan/schema";
 
-import { getUserOpInfoFromParentHash, getUserOpLogFromOpHash } from "./utils";
+import {
+  getTokenAndNFTDataFromBundleHash,
+  getUserOpInfoFromParentHash,
+  getUserOpLogFromOpHash,
+  isEoaAddressEqual,
+} from "./utils";
 
-export async function getUserOp(chainId: EvmChainIdType, searchQuery: string) {
+export async function getUserOp(
+  chainId: EvmChainIdType,
+  searchQuery: string,
+  moreInfo: boolean,
+) {
   const parsedUserOpEventLog = await getUserOpLogFromOpHash(
     searchQuery,
     chainId,
@@ -15,8 +24,23 @@ export async function getUserOp(chainId: EvmChainIdType, searchQuery: string) {
     parentHash,
     chainId,
     parsedUserOpEventLog,
-    true,
   );
+
+  if (moreInfo) {
+    const tokenAndNFTData = await getTokenAndNFTDataFromBundleHash(
+      parentHash,
+      chainId,
+    );
+
+    console.log("tokenAndNFTData", tokenAndNFTData);
+
+    const targetData = tokenAndNFTData.find((payload) => {
+      if (isEoaAddressEqual(payload.userOpHash, searchQuery)) {
+        return true;
+      }
+    });
+    return { ...uopInfo, ...targetData };
+  }
 
   return uopInfo;
 }

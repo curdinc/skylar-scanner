@@ -112,6 +112,16 @@ export const userOpSchema = z.object({
 });
 export type userOpType = z.infer<typeof userOpSchema>;
 
+export const CoinSchema = z.object({
+  type: z.literal("native"),
+  name: z.string(),
+  decimals: z.number(),
+  from: EthAddressSchema,
+  to: EthAddressSchema,
+  amount: z.coerce.string(),
+});
+export type CoinType = z.infer<typeof CoinSchema>;
+
 export const TokenSchema = z.object({
   type: z.literal("erc20"),
   contract: EthAddressSchema,
@@ -119,7 +129,7 @@ export const TokenSchema = z.object({
   decimals: z.number(),
   from: EthAddressSchema,
   to: EthAddressSchema,
-  amount: z.bigint(),
+  amount: z.coerce.string(),
 });
 export type TokenType = z.infer<typeof TokenSchema>;
 
@@ -133,15 +143,23 @@ export const NftSchema = z.object({
   name: z.string(),
   from: EthAddressSchema,
   to: EthAddressSchema,
-  amount: z.bigint(),
-  tokenId: z.bigint(),
+  amount: z.coerce.string(),
+  tokenId: z.coerce.string(),
   imageUrl: z.string(),
 });
 export type NftType = z.infer<typeof NftSchema>;
 
-export const AssetLogsSchema = z.union([
-  TokenSchema.array(),
-  NftSchema.array(),
-]);
+export const userOpInfoPayloadSchema = z.object({
+  userOpHash: EthHashSchema,
+  nfts: NftSchema.array(),
+  tokens: TokenSchema.array(),
+});
 
-export type AssetLogsType = z.infer<typeof AssetLogsSchema>;
+export const userOpDetailsSchema = z.object({
+  ...userOpSchema.shape,
+  tokens: TokenSchema.array(),
+  nfts: NftSchema.array(),
+  coins: CoinSchema.array().default([]),
+});
+
+export type userOpDetailsType = z.infer<typeof userOpDetailsSchema>;
