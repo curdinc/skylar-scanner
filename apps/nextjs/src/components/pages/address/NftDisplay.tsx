@@ -55,14 +55,28 @@ export const NftDisplay = ({
   const filteredData = formattedData?.filter((n) => n);
   console.log(filteredData);
   return (
-    <Grid templateColumns="repeat(5, 1fr)" gap={4}>
-      {filteredData?.map((nft) => (
-        <Card
-          imageUrl={nft?.imageUrl || ""}
-          name={nft?.name || ""}
-          price={nft?.price?.toString() || ""}
-        />
-      ))}
+    <Grid
+      templateColumns={{
+        base: "repeat(1, 1fr)",
+        sm: "repeat(2, 1fr)",
+        md: "repeat(3, 1fr)",
+        xl: "repeat(5, 1fr)",
+      }}
+      gap={4}
+    >
+      {filteredData?.map((nft) => {
+        if (nft) {
+          return (
+            <Card
+              key={nft.imageUrl}
+              imageUrl={nft?.imageUrl || ""}
+              name={nft?.name || ""}
+              price={nft?.price?.toString() || ""}
+            />
+          );
+        }
+        return null;
+      })}
     </Grid>
   );
 };
