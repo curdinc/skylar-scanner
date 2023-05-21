@@ -1,6 +1,5 @@
-import { useState } from "react";
 import { useRouter } from "next/router";
-import { Box, Center, Flex, Heading, Spinner, Stack } from "@chakra-ui/react";
+import { Center, Flex, Heading, Spinner, Stack, Text } from "@chakra-ui/react";
 import { useAtom } from "jotai";
 
 import {
@@ -9,6 +8,8 @@ import {
 } from "@skylarScan/schema/src/evmTransaction";
 
 import { api } from "~/utils/api";
+import { formatCurrency } from "~/utils/currency";
+import { formatDateSince } from "~/utils/date";
 import CopyClipboard from "~/components/CopyClipboard";
 import TransactionCost from "~/components/TransactionCost";
 import { CurrentChainIdAtom } from "~/atoms/chain";
@@ -32,8 +33,6 @@ export const TransactionPage = () => {
     },
   );
 
-  const [timeDiff, setTimeDiff] = useState("");
-
   if (isLoading) {
     return (
       <Center flexGrow={1}>
@@ -46,48 +45,52 @@ export const TransactionPage = () => {
     return <Center flexGrow={1}>{error.message}</Center>;
   }
 
-  console.log(transactionInfo.);
+  console.log(transactionInfo);
 
   return (
-    <Stack spacing={6} width="full" padding="10">
-      <CopyClipboard
-        value={transactionInfo?.txnHash ? transactionInfo?.txnHash : ""}
-        size={"2xl"}
-        header
-      />
+    <Stack spacing={10} width="full" padding="10">
+      <Stack>
+        <CopyClipboard value={transactionInfo.txnHash} size={"2xl"} header />
 
-      {/* TODO add timestamp */}
-      {/* {transactionInfo && (
-        <Text marginTop={"-4"}>
-          Transaction submitted {timeDiff} ago by SCW address
-        </Text>
-      )} */}
+        {transactionInfo && (
+          <Text mt={"-4"}>
+            Transaction submitted{" "}
+            {formatDateSince(transactionInfo.timestamp.getTime())} ago by{" "}
+            <CopyClipboard
+              value={transactionInfo.from}
+              size="md"
+              display={"inline-flex"}
+            />
+          </Text>
+        )}
+      </Stack>
 
-      <Box width={"100%"} maxWidth={"lg"}>
-        <Flex justifyContent="space-between" alignItems="center">
-          <Heading size="md" fontWeight="semibold">
-            Bundle Hash
-          </Heading>
-          <CopyClipboard
-            value={transactionInfo?.to ? transactionInfo?.to : ""}
-            size="md"
-          />
-        </Flex>
+      <Stack width={"100%"} maxWidth={"lg"} spacing={5}>
+        {transactionInfo.to && (
+          <Flex justifyContent="space-between" alignItems="center">
+            <Heading size="md" fontWeight="semibold">
+              Interacted With
+            </Heading>
+            <CopyClipboard value={transactionInfo.to} size="md" />
+          </Flex>
+        )}
         <Flex justifyContent="space-between" alignItems="center">
           <Heading size="md" fontWeight="semibold">
             Transaction cost
           </Heading>
           {transactionInfo && (
-            // TODO add in cost
             <TransactionCost
-              popoverDetails={`__ of __ units @ ${transactionInfo.gasPrice} gwei / gas`}
+              popoverDetails={`${transactionInfo.gasData.gasUsed} of ${transactionInfo.gasData.gasLimit} units @ ${transactionInfo.gasData.gasPrice} gwei / gas`}
               copy={""}
-              cost={"SOME VALUE LOL"}
+              cost={formatCurrency(
+                transactionInfo.gasData.usdcPricePaid,
+                "USD",
+              )}
               size="md"
             />
           )}
         </Flex>
-      </Box>
+      </Stack>
     </Stack>
   );
 };
