@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Box,
   Flex,
@@ -15,8 +14,8 @@ import { AlertCircle } from "lucide-react";
 
 import { type userOpType } from "@skylarScan/schema/src/evmTransaction";
 
+import { formatEvmAddress } from "~/utils/blockchain";
 import { CopyPopover, IconDefault } from "~/components/CopyIcon";
-import { convertToDisplayAddress } from "~/components/convertStrings";
 
 interface props {
   data: userOpType;
@@ -73,7 +72,7 @@ function TransactionCost({ data, size }: props) {
                   data?.gasData.gasLimit
                 } @ ${Number(data?.gasData.gasPrice).toFixed(
                   2,
-                )} gwei / gas. Sponsored by ${convertToDisplayAddress(
+                )} gwei / gas. Sponsored by ${formatEvmAddress(
                   paymasterValue,
                 )}`}
               </Text>

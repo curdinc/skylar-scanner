@@ -1,5 +1,8 @@
 export {
   EvmAddressTokensAndNftsQuerySchema,
+  EvmParseQuerySchema,
+  NftDetailsSchema,
+  parseQuerySchema,
   type EvmAddressTokensAndNftsQueryType,
 } from "./src/addressDetails";
 export {

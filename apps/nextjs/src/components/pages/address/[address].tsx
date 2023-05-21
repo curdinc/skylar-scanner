@@ -1,67 +1,71 @@
 import React, { useState } from "react";
+import { useRouter } from "next/router";
 import {
+  Center,
   Container,
-  Flex,
-  Grid,
-  Image,
   Tab,
   TabList,
   TabPanel,
   TabPanels,
   Tabs,
-  Text,
 } from "@chakra-ui/react";
+import { useAtom } from "jotai";
 
-import Card from "~/components/Card";
+import { EthAddressSchema } from "@skylarScan/schema";
+
+import { api } from "~/utils/api";
 import SortableTable from "~/components/SortableTable";
+import { CurrentChainIdAtom } from "~/atoms/chain";
+import { NftDisplay } from "./NftDisplay";
+import { UserAvatar } from "./UserAvatar";
 
 export const UserWalletPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState(0);
+  const {
+    query: { address: _address },
+  } = useRouter();
+  const address = _address ? EthAddressSchema.parse(_address) : "0x";
+  const [chainId] = useAtom(CurrentChainIdAtom);
+  const {
+    data: addressData,
+    isFetching,
+    error,
+  } = api.evmAddress.addressDetails.useQuery(
+    {
+      address,
+    },
+    {
+      enabled: address !== "0x",
+    },
+  );
 
+  const [activeTab, setActiveTab] = useState(0);
   const handleTabChange = (index: number) => {
     setActiveTab(index);
   };
+
+  if (error) {
+    return <Center flexGrow={1}>{error.message}</Center>;
+  }
+
+  console.log('isFetching || address === "0x"', isFetching);
+  console.log('address === "0x"', address === "0x");
   return (
     <Container maxW="container.lg" mt={10}>
-      <Flex align="center" mb={6}>
-        <Image
-          src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-          alt="User Avatar"
-          boxSize={120}
-          borderRadius="full"
-        />
-        <Text ml={4} fontSize="2xl" fontWeight="bold">
-          User's NFT Collection
-        </Text>
-      </Flex>
+      <UserAvatar
+        address={address}
+        ensAvatar={addressData?.addressDetails?.ensAvatar ?? undefined}
+        ensName={addressData?.addressDetails?.ensName}
+        isLoading={isFetching || address === "0x"}
+      />
       <Tabs isLazy index={activeTab} onChange={handleTabChange}>
         <TabList>
-          <Tab>Tab 1</Tab>
-          <Tab>Tab 2</Tab>
-          <Tab>Tab 3</Tab>
+          <Tab>NFTs</Tab>
+          <Tab>Tokens</Tab>
+          <Tab>Transactions</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
-            <Grid templateColumns="repeat(3, 1fr)" gap={6}>
-              <Card
-                imageUrl="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-                name="NFT"
-                price="11 ETH"
-                bestOffer="2"
-              />
-              <Card
-                imageUrl="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-                name="NFT"
-                price="11 ETH"
-                bestOffer="2"
-              />
-              <Card
-                imageUrl="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80"
-                name="NFT"
-                price="11 ETH"
-                bestOffer="2"
-              />
-            </Grid>
+            <NftDisplay address={address} chainId={chainId} />
           </TabPanel>
           <TabPanel>
             <SortableTable />

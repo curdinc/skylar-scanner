@@ -1,8 +1,5 @@
-import React from "react";
 import {
   Box,
-  Flex,
-  Heading,
   IconButton,
   Popover,
   PopoverArrow,
@@ -46,7 +43,9 @@ export const CopyPopover = ({ content, size }: props) => {
           size={"1"}
           onClick={() => {
             onOpen();
-            navigator.clipboard.writeText(content);
+            navigator.clipboard.writeText(content).catch((e) => {
+              console.error("ERROR: Copying to clipboard failed.", e);
+            });
             setTimeout(() => {
               onClose();
             }, 1500);

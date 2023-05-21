@@ -1,11 +1,13 @@
 import { Alchemy, Network } from "alchemy-sdk";
 
+import { NftDetailsSchema } from "@skylarScan/schema/src/addressDetails";
 import {
   type EthAddressType,
   type EvmChainIdType,
 } from "@skylarScan/schema/src/evmTransaction";
 
 import { env } from "../../../env.mjs";
+import { getViemClient } from "./client";
 
 const networkToChainId: Record<EvmChainIdType, Network> = {
   1: Network.ETH_MAINNET,
@@ -49,5 +51,44 @@ export async function getAddressNfts(
     nfts.totalCount += moreNfts.totalCount;
     nfts.ownedNfts = nfts.ownedNfts.concat(moreNfts.ownedNfts);
   }
-  return nfts;
+  return {
+    totalCount: nfts.totalCount,
+    ownedNfts: nfts.ownedNfts
+      .map((nft) => {
+        const parsedNft = NftDetailsSchema.safeParse(nft);
+        if (!parsedNft.success) {
+          console.log("nft", nft.media);
+          console.error(
+            "ERROR: parsing nft: ",
+            JSON.stringify(parsedNft.error.format()),
+          );
+          return;
+        }
+
+        return parsedNft.data;
+      })
+      .filter((nft) => !!nft),
+  };
+}
+
+export async function getAddressDetails(address: EthAddressType) {
+  const client = getViemClient("1");
+  try {
+    const ensName = await client.getEnsName({
+      address,
+    });
+    if (!ensName) {
+      return;
+    }
+    const ensAvatar = await client.getEnsAvatar({
+      name: ensName,
+    });
+    return { ensName, ensAvatar };
+  } catch (e) {
+    console.error(
+      "ERROR: fetching ensName and ensAvatar from viem client: ",
+      e,
+    );
+    return;
+  }
 }
