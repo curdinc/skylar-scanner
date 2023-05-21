@@ -2,7 +2,7 @@ import React from "react";
 import { Flex, Heading, Text } from "@chakra-ui/react";
 
 import { CopyPopover } from "~/components/CopyIcon";
-import convertDisplayAddress from "~/components/displayAddress";
+import { convertToDisplayAddress } from "~/components/convertStrings";
 
 interface props {
   value: string;
@@ -15,10 +15,10 @@ function CopyClipboard({ value, size, header }: props) {
     <Flex alignItems="center" gap={`var(--chakra-fontSizes-${size})`}>
       {header ? (
         <Heading size={size} as={"h2"}>
-          {convertDisplayAddress(value)}
+          {convertToDisplayAddress(value)}
         </Heading>
       ) : (
-        <Text fontSize={size}>{convertDisplayAddress(value)}</Text>
+        <Text fontSize={size}>{convertToDisplayAddress(value)}</Text>
       )}
 
       <CopyPopover content={value} size={size} />

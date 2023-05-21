@@ -19,7 +19,7 @@ export default function Navbar({
   const router = useRouter();
   return (
     <Flex
-      bg={useColorModeValue("gray.100", "gray.900")}
+      bg={useColorModeValue("gray.100", "dark.600")}
       px="4"
       w="full"
       h={20}

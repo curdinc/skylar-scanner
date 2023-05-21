@@ -1,22 +1,28 @@
 import React from "react";
-import { Box, Card, Image, Text } from "@chakra-ui/react";
+import { Box, Image, Text } from "@chakra-ui/react";
 
 interface CardProps {
   imageUrl: string;
-  title: string;
+  name: string;
+  price: string;
+  bestOffer: string;
 }
 
-const CustomCard: React.FC<CardProps> = ({ imageUrl, title }) => {
+const Card: React.FC = ({ imageUrl, name, price, bestOffer }) => {
   return (
-    <Card maxW="sm" borderWidth="1px" borderRadius="lg" overflow="hidden">
-      <Image src={imageUrl} alt={title} w="full" h={200} objectFit="cover" />
-      <Box p="6">
-        <Text fontSize="xl" fontWeight="bold" mt={2}>
-          {title}
+    <Box borderWidth="1px" borderRadius="md" overflow="hidden" boxShadow="sm">
+      <Image src={imageUrl} alt="NFT" />
+      <Box p={4}>
+        <Text fontSize="lg" fontWeight="bold">
+          {name}
+        </Text>
+        <Text fontSize="md">{price}</Text>
+        <Text fontSize="sm" color="gray.500">
+          {bestOffer}
         </Text>
       </Box>
-    </Card>
+    </Box>
   );
 };
 
-export default CustomCard;
+export default Card;

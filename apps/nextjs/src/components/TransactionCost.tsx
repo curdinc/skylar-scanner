@@ -2,7 +2,6 @@ import React from "react";
 import {
   Box,
   Flex,
-  Heading,
   IconButton,
   Popover,
   PopoverArrow,
@@ -12,29 +11,28 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { AlertCircle, Copy } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 
 import { type userOpType } from "@skylarScan/schema/src/evmTransaction";
 
 import { CopyPopover, IconDefault } from "~/components/CopyIcon";
-import convertDisplayAddress from "~/components/displayAddress";
+import { convertToDisplayAddress } from "~/components/convertStrings";
 
 interface props {
-  data: userOpType | undefined;
+  data: userOpType;
   size: string;
 }
 
 function TransactionCost({ data, size }: props) {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const value = Number(data?.transactionCost);
+  const valueRounded = value.toFixed(
+    3 - Math.floor(Math.log(value) / Math.log(10)),
+  );
 
-  // TODO update this from data [not included yet]
-  const boughtUnits = 1234;
-  const totalUnits = 1232;
-  const cost = 17;
-  const paymaster = "0xawdaw12312312";
-  const value = 0.002;
-
-  console.log(convertDisplayAddress);
+  const paymasterValue =
+    data.parsedUserOp.paymasterAndData &&
+    data.parsedUserOp.paymasterAndData.slice(0, 42);
 
   return (
     <Flex
@@ -42,7 +40,7 @@ function TransactionCost({ data, size }: props) {
       gap={`var(--chakra-fontSizes-${size})`}
       marginTop="0"
     >
-      <Text fontSize={size}>${value}USD</Text>
+      <Text fontSize={size}>${valueRounded}ETH</Text>
 
       <Popover>
         <PopoverTrigger>
@@ -66,16 +64,20 @@ function TransactionCost({ data, size }: props) {
           <PopoverBody>
             <Flex alignItems={"center"}>
               <Text
-                size="xs"
+                fontSize="xxs"
                 noOfLines={3}
                 textAlign="center"
                 width={"fit-content"}
               >
-                {`${boughtUnits} out of ${totalUnits} @ ${cost} gwei / gas. Sponsored by ${convertDisplayAddress(
-                  paymaster,
+                {`${data?.gasData.gasUsed} out of ${
+                  data?.gasData.gasLimit
+                } @ ${Number(data?.gasData.gasPrice).toFixed(
+                  2,
+                )} gwei / gas. Sponsored by ${convertToDisplayAddress(
+                  paymasterValue,
                 )}`}
               </Text>
-              <CopyPopover content={paymaster} size={size} />
+              <CopyPopover content={paymasterValue} size={size} />
             </Flex>
           </PopoverBody>
         </Box>

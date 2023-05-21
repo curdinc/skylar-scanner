@@ -5,6 +5,7 @@ import {
   Center,
   Flex,
   Heading,
+  Link,
   Spinner,
   Stack,
   Text,
@@ -22,6 +23,11 @@ import TransactionCost from "~/components/TransactionCost";
 import dummyNFT from "~/NFTdummy.json";
 import { DataTable } from "../../../Table";
 
+type UserOpDataDisplayType = {
+  Name: string;
+  Type: string;
+  Data: string | JSX.Element | bigint;
+};
 export const UserOpPage = () => {
   const {
     query: { transactionHash, chainId },
@@ -31,8 +37,10 @@ export const UserOpPage = () => {
   const [userOpData, setUserOpData] = useState<userOpType | undefined>(
     undefined,
   );
+  const [userOpArray, setUserOpArray] = useState<UserOpDataDisplayType[]>([]);
   const isLoading = !userOpData && !error;
-  const bgcolor = useColorModeValue("gray.100", "gray.700");
+  const router = useRouter();
+  const bgcolor = useColorModeValue("gray.100", "darkColor.500");
 
   useEffect(() => {
     if (!chainId || !transactionHash) {
@@ -63,6 +71,52 @@ export const UserOpPage = () => {
     }
   }, [chainId, transactionHash, context]);
 
+  const userOpMap = {
+    sender: "address",
+    nonce: "uint256",
+    initCode: "bytes",
+    callData: "bytes",
+    callGasLimit: "uint256",
+    verificationGasLimit: "uint256",
+    preVerificationGas: "uint256",
+    maxFeePerGas: "uint256",
+    maxPriorityFeePerGas: "uint256",
+    paymasterAndData: "bytes",
+    signature: "bytes",
+  };
+
+  useEffect(() => {
+    const userDataArray: UserOpDataDisplayType[] = [];
+    if (userOpData) {
+      Object.keys(userOpData.parsedUserOp).forEach((_item) => {
+        const item = _item as keyof typeof userOpData.parsedUserOp;
+        const type = userOpMap[item];
+        const data =
+          type == "address" ? (
+            <Link
+              color="cyan.600"
+              onClick={() => {
+                router.push(`/parse/${type}`).catch((e) => {
+                  console.log(`Error routing to parse/${type}: `, e);
+                });
+              }}
+            >
+              {userOpData.parsedUserOp[item].toString()}
+            </Link>
+          ) : (
+            userOpData.parsedUserOp[item]
+          );
+
+        userDataArray.push({
+          Name: item,
+          Type: type,
+          Data: data,
+        });
+      });
+      setUserOpArray(userDataArray);
+    }
+  }, [userOpData]);
+
   if (isLoading) {
     return (
       <Center flexGrow={1}>
@@ -70,18 +124,19 @@ export const UserOpPage = () => {
       </Center>
     );
   }
-  console.log(transactionHash);
-  console.log(userOpData);
-  // userOpData.userOp
 
   if (error) {
     return <Center flexGrow={1}>{error}</Center>;
   }
 
   return (
-    <Box width="100%" padding="10">
+    <Box
+      width="100%"
+      padding="10"
+      sx={{ display: "flex", flexDirection: "column", gap: "8" }}
+    >
       <CopyClipboard
-        value={transactionHash && transactionHash[0] ? transactionHash[0] : ""}
+        value={userOpData?.userOpHash ? userOpData?.userOpHash : ""}
         size={"2xl"}
         header
       />
@@ -91,24 +146,26 @@ export const UserOpPage = () => {
           <Heading size="md" fontWeight="semibold">
             Bundle Hash
           </Heading>
+          {/* TODO fill in */}
           <CopyClipboard value={"0x1231hj23j3j3jk3awwdaawd23123"} size="md" />
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
           <Heading size="md" fontWeight="semibold">
             Transaction cost
           </Heading>
-          <TransactionCost data={userOpData} size="md" />
+          {userOpData && <TransactionCost data={userOpData} size="md" />}
         </Flex>
       </Box>
       {/* Time is not there */}
 
       {/* User OP  */}
       <Box rounded="md" bg={bgcolor}>
-        <Heading padding="5">User Op</Heading>
-        <DataTable headers={["To", "From", "NFT", "Amount"]} data={dummyNFT} />
+        <Heading padding="5" paddingBottom="2" size="lg">
+          User Op
+        </Heading>
+        <DataTable headers={["Name", "Type", "Data"]} data={userOpArray} />
       </Box>
-      <DataTable headers={["To", "From", "NFT", "Amount"]} data={dummyNFT} />
-      <DataTable headers={["To", "From", "NFT", "Amount"]} data={dummyNFT} />
+
       <div></div>
     </Box>
   );
