@@ -1,5 +1,3 @@
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
 import {
   Box,
   Center,
@@ -9,6 +7,8 @@ import {
   Spinner,
   Text,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { formatUnits } from "viem";
 
 import {
@@ -16,11 +16,11 @@ import {
   type transactionType,
 } from "@skylarScan/schema/src/evmTransaction";
 
+import CopyClipboard from "~/components/CopyClipboard";
+import TransactionCost from "~/components/TransactionCost";
 import { api } from "~/utils/api";
 import { formatEvmAddress } from "~/utils/blockchain";
 import { formatDateSince } from "~/utils/date";
-import CopyClipboard from "~/components/CopyClipboard";
-import TransactionCost from "~/components/TransactionCost";
 import { AccordianTable } from "../../../Table";
 
 type UserOpDataDisplayType = {
@@ -179,7 +179,7 @@ export const UserOpPage = () => {
         newTokenArray.push({
           From: item.from,
           To: item.to,
-          Amount: formatUnits(item.amount, item.decimals),
+          Amount: Number(formatUnits(item.amount, item.decimals)).toFixed(3).toString(),
         });
       });
       setTokenArray(newTokenArray);
