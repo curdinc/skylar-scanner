@@ -1,4 +1,4 @@
-import { formatGwei, isAddressEqual } from "viem";
+import { formatGwei, formatUnits, isAddressEqual } from "viem";
 
 import { EvmParseQuerySchema } from "@skylarScan/schema/src/addressDetails";
 import {
@@ -11,6 +11,7 @@ import {
 import { getViemClient } from "../lib/evmTransaction/client";
 import { ENTRY_POINT_CONTRACT_ADDRESSES } from "../lib/evmTransaction/constants";
 import { getUserOp } from "../lib/evmTransaction/getUserOp";
+import { swapToUsd } from "../lib/evmTransaction/oneInchExchange";
 import { parseEvmInput } from "../lib/evmTransaction/parseEvmInput";
 import {
   getTokenAndNFTDataFromBundleHash,
@@ -69,15 +70,28 @@ export const evmTransactionRouter = createTRPCRouter({
         txnHash,
         chainId,
       );
-
+      console.log("tokenAndNFTData", tokenAndNFTData);
+      const transactionCostSwapDetails = await swapToUsd({
+        chainId,
+        amount: txnReceipt.effectiveGasPrice * txnReceipt.gasUsed,
+        contractAddress: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      });
+      const transactionCost = formatUnits(
+        transactionCostSwapDetails.toTokenAmount,
+        transactionCostSwapDetails.toToken.decimals,
+      );
       const transactionObject: transactionType = {
+        to: txnReceipt.to ?? undefined,
+        from: txn.from,
         blockNumber: txn.blockNumber ?? 0n,
         gasData: {
           baseFeePerGas: formatGwei(txn.gasPrice ?? 0n),
           gasPrice: formatGwei(txnReceipt.effectiveGasPrice),
-          gasUsed: formatGwei(txn.gas),
+          gasUsed: txnReceipt.gasUsed.toString(),
+          gasLimit: txn.gas.toString(),
           maxFeePerGas: formatGwei(txn.maxFeePerGas ?? 0n),
           tipFeePerGas: formatGwei(txn.maxPriorityFeePerGas ?? 0n),
+          usdcPricePaid: transactionCost.toString(),
         },
         nonce: txn.nonce,
         rawInput: txn.input,

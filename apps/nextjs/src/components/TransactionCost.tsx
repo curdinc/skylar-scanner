@@ -34,7 +34,7 @@ function TransactionCost({ popoverDetails, copy, size, cost }: props) {
       marginTop="0"
     >
       <Text fontSize={size} color={color}>
-        ${cost}ETH
+        {cost}
       </Text>
 
       <Popover>
@@ -63,6 +63,7 @@ function TransactionCost({ popoverDetails, copy, size, cost }: props) {
                 noOfLines={3}
                 textAlign="center"
                 width={"fit-content"}
+                sx={{ textWrap: "balance" }}
               >
                 {popoverDetails}
               </Text>

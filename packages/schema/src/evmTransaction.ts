@@ -165,6 +165,8 @@ export const userOpDetailsSchema = z.object({
 export type userOpDetailsType = z.infer<typeof userOpDetailsSchema>;
 
 export const transactionSchema = z.object({
+  to: EthAddressSchema.optional(),
+  from: EthAddressSchema,
   nonce: z.number(),
   blockNumber: z.bigint(),
   txnHash: z.string(),
@@ -172,9 +174,11 @@ export const transactionSchema = z.object({
   gasData: z.object({
     gasUsed: z.string(),
     gasPrice: z.string(),
+    gasLimit: z.string(),
     baseFeePerGas: z.string(),
     tipFeePerGas: z.string(),
     maxFeePerGas: z.string(),
+    usdcPricePaid: z.string(),
   }),
   rawInput: BytesSchema,
   parsedInput: z
