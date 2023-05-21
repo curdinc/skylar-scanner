@@ -12,6 +12,7 @@ export const env = createEnv({
     BASE_OPENAPI_URL: z.string().url(),
     DISCORD_MAILING_LIST_WH: z.string().url(),
     INFURA_KEY: z.string(),
+    ALCHEMY_KEY: z.string(),
   },
   /**
    * Specify your client-side environment variables schema here.
@@ -29,5 +30,6 @@ export const env = createEnv({
     BASE_OPENAPI_URL: process.env.BASE_OPENAPI_URL,
     DISCORD_MAILING_LIST_WH: process.env.DISCORD_MAILING_LIST_WH,
     INFURA_KEY: process.env.INFURA_KEY,
+    ALCHEMY_KEY: process.env.ALCHEMY_KEY,
   },
 });
