@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 import { EvmParseQuerySchema } from "@skylarScan/schema/src/addressDetails";
 import {
   EthHashSchema,
@@ -17,10 +15,10 @@ export const evmTransactionRouter = createTRPCRouter({
   userOpInfo: publicProcedure
     .meta({ openapi: { method: "GET", path: "/userOpInfo" } })
     .input(EvmTransactionQuerySchema)
-    .output(z.any())
     .query(async ({ input }) => {
       const { chainId, txnHash: searchQuery } = input;
-      return getUserOp(chainId, searchQuery);
+      const res = await getUserOp(chainId, searchQuery, true);
+      return res;
     }),
 
   transactionRecognizedInfo: publicProcedure

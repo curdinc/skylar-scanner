@@ -27,6 +27,7 @@ export const getUserOpLogFromOpHash = async (
 ) => {
   const client = getViemClient(chainId);
   const entryPointContract = ENTRY_POINT_CONTRACT_ADDRESSES[chainId][0];
+
   const filter = await client.createEventFilter({
     address: entryPointContract,
     event: USER_OPERATION_EVENT,
@@ -35,7 +36,7 @@ export const getUserOpLogFromOpHash = async (
   });
 
   const logs = await client.getFilterLogs({ filter });
-
+  console.log("logs", logs);
   if (logs.length !== 1) {
     console.error("Hash not found or collides", logs);
     throw new TRPCError({
@@ -73,7 +74,6 @@ export const getUserOpInfoFromParentHash = async (
   parentHash: EthHashType,
   chainId: EvmChainIdType,
   userOpLog: userOpLogType,
-  moreInfo = false,
 ) => {
   // get the viem client
   const client = getViemClient(chainId);
@@ -86,9 +86,18 @@ export const getUserOpInfoFromParentHash = async (
   });
 
   const parsedInp: `0x${string}` = `0x${txnView.input.slice(10)}`;
-
+  console.log("parsedInp", parsedInp);
   const parentTxnInput = decodeAbiParameters(HANDLE_OPS_INPUT, parsedInp);
-
+  // const [uops, beneficiary] = decodeAbiParameters(
+  //   [
+  //     {
+  //       name: "uops",
+  //       type: "tuple(address, uint256, bytes, bytes, uint256, uint256, uint256, uint256, uint256, bytes, bytes)[]",
+  //     },
+  //     { name: "beneficiary", type: "address" },
+  //   ],
+  //   parsedInp,
+  // );
   if (parentTxnInput.length !== 2) {
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
