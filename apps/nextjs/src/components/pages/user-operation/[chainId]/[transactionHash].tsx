@@ -8,8 +8,10 @@ import {
   Spinner,
   Stack,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import { useAtom } from "jotai";
+import { Priority, useKBar } from "kbar";
 import { formatUnits } from "viem";
 
 import {
@@ -67,6 +69,83 @@ export const UserOpPage = () => {
   const [nftArray, setNftArray] = useState<nftType[]>([]);
   const [tokenArray, setTokenArray] = useState<tokenType[]>([]);
   const router = useRouter();
+
+  const { query } = useKBar();
+  const toast = useToast();
+  useEffect(() => {
+    query.registerActions([
+      {
+        id: "Copy Transaction Hash",
+        name: "Copy Transaction Hash",
+        shortcut: ["c", "h"],
+        keywords: "copy transaction hash",
+        priority: Priority.HIGH,
+        section: "Transaction",
+        perform: () => {
+          navigator.clipboard
+            .writeText(userOpData?.userOpHash || "")
+            .catch((e) => {
+              console.error(
+                "ERROR: something went wrong copying to clipboard: ",
+                e,
+              );
+            });
+          toast({
+            title: "Copied transaction hash",
+            status: "success",
+            duration: 2000,
+            isClosable: true,
+          });
+        },
+      },
+      {
+        id: "Copy From Address",
+        name: "Copy From Address",
+        shortcut: ["c", "f"],
+        keywords: "copy From address",
+        priority: Priority.HIGH,
+        section: "Transaction",
+        perform: () => {
+          navigator.clipboard.writeText(userOpData?.sender || "").catch((e) => {
+            console.error(
+              "ERROR: something went wrong copying to clipboard: ",
+              e,
+            );
+          });
+          toast({
+            title: "Copied From hash",
+            status: "success",
+            duration: 2000,
+            isClosable: true,
+          });
+        },
+      },
+      {
+        id: "Copy Input Data",
+        name: "Copy Input Data",
+        shortcut: ["c", "i"],
+        keywords: "copy transaction input data",
+        priority: Priority.HIGH,
+        section: "Transaction",
+        perform: () => {
+          navigator.clipboard
+            .writeText(userOpData?.rawUserOp || "")
+            .catch((e) => {
+              console.error(
+                "ERROR: something went wrong copying to clipboard: ",
+                e,
+              );
+            });
+          toast({
+            title: "Copied input data",
+            status: "success",
+            duration: 2000,
+            isClosable: true,
+          });
+        },
+      },
+    ]);
+  }, [userOpData, query, toast]);
 
   useEffect(() => {
     const userOpMap = {
@@ -143,7 +222,7 @@ export const UserOpPage = () => {
         newNFTArray.push({
           From: item.from,
           To: item.to,
-          NFT: item.name,
+          // NFT: item.name,
           Amount: item.amount.toString(),
         });
       });
@@ -222,7 +301,7 @@ export const UserOpPage = () => {
       {/* NFTs */}
       {userOpData.nfts && userOpData.nfts.length && (
         <AccordianTable
-          headers={["From", "To", "NFT", "Amount"]}
+          headers={["From", "To", "Amount"]}
           title={`NFTs [ ${userOpData.nfts.length} ]`}
           data={nftArray}
         />

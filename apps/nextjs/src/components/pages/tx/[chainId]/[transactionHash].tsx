@@ -30,8 +30,8 @@ export const TransactionPage = () => {
   const {
     query: { transactionHash, chainId },
   } = useRouter();
-  const { query } = useKBar();
   const [currentChainId] = useAtom(CurrentChainIdAtom);
+  const { query } = useKBar();
   const toast = useToast();
   const {
     data: transactionInfo,
