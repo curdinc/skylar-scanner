@@ -1,14 +1,14 @@
 import React from "react";
 import { Box, Image, Text } from "@chakra-ui/react";
 
-interface CardProps {
+interface ICardProps {
   imageUrl: string;
   name: string;
   price: string;
   bestOffer: string;
 }
 
-const Card: React.FC = ({ imageUrl, name, price, bestOffer }) => {
+const Card: React.FC<ICardProps> = ({ imageUrl, name, price, bestOffer }) => {
   return (
     <Box borderWidth="1px" borderRadius="md" overflow="hidden" boxShadow="sm">
       <Image src={imageUrl} alt="NFT" />
