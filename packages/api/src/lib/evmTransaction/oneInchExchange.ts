@@ -30,6 +30,7 @@ export async function swapTokens({
   });
   if (!response.ok) {
     const error = await response.text();
+    console.error("ERROR swapping tokens on one inch: ", error);
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
       message: `Failed to fetch quote for ${fromAddress} against ${toAddress}`,
