@@ -58,19 +58,46 @@ export async function swapToUsd({
   } as const;
   const usdcContractAddress = usdcContractAddresses[chainId];
 
-  const swapResult = await swapTokens({
-    fromAddress: isAddressEqual(contractAddress, usdcContractAddress)
-      ? "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
-      : contractAddress,
-    toAddress: usdcContractAddress,
-    chainId,
-    amount,
-  });
+  // const swapResult = await swapTokens({
+  //   fromAddress: isAddressEqual(contractAddress, usdcContractAddress)
+  //     ? "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+  //     : contractAddress,
+  //   toAddress: usdcContractAddress,
+  //   chainId,
+  //   amount,
+  // });
+
+  const swapResult = {
+    fromToken: {
+      symbol: "ETH",
+      name: "Ether",
+      decimals: 18,
+      address: "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+      logoURI:
+        "https://tokens.1inch.io/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png",
+    },
+    toToken: {
+      symbol: "USDC",
+      name: "USD Coin",
+      decimals: 6,
+      address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48",
+      logoURI:
+        "https://tokens.1inch.io/0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48.png",
+    },
+    fromTokenAmount: 1000000000000000000n,
+    toTokenAmount: 1810000000n,
+    estimatedGas: 186779n,
+  };
 
   if (isAddressEqual(contractAddress, usdcContractAddress)) {
     swapResult.fromToken = swapResult.toToken;
     swapResult.fromTokenAmount = amount;
     swapResult.toTokenAmount = amount;
+    return swapResult;
   }
+  swapResult.toTokenAmount =
+    (swapResult.toTokenAmount * amount) / swapResult.fromTokenAmount;
+  swapResult.fromTokenAmount = amount;
+
   return swapResult;
 }
