@@ -195,7 +195,7 @@ export const BundleTransactionPage = () => {
         <AccordianTable
           headers={
             userOpData?.nfts && userOpData?.nfts.length > 0
-              ? ["From", "To", "NFT", "Amount"]
+              ? ["From", "To", "Amount"]
               : []
           }
           title={`NFTs [ ${userOpData?.nfts.length} ]`}
