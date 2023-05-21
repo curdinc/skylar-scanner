@@ -14,7 +14,7 @@ export async function parseEvmInput(query: string, chainId: EvmChainIdType) {
   const addressParse = EthAddressSchema.safeParse(query);
   const txnParse = EthHashSchema.safeParse(query);
   if (addressParse.success) {
-    // TODO
+    return `/address/${addressParse.data}`;
   }
   if (txnParse.success) {
     const client = getViemClient(chainId);
