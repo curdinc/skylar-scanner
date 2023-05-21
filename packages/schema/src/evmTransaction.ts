@@ -163,3 +163,29 @@ export const userOpDetailsSchema = z.object({
 });
 
 export type userOpDetailsType = z.infer<typeof userOpDetailsSchema>;
+
+export const transactionSchema = z.object({
+  nonce: z.number(),
+  blockNumber: z.bigint(),
+  txnHash: z.string(),
+  timestamp: z.date(),
+  gasData: z.object({
+    gasUsed: z.string(),
+    gasPrice: z.string(),
+    baseFeePerGas: z.string(),
+    tipFeePerGas: z.string(),
+    maxFeePerGas: z.string(),
+  }),
+  rawInput: BytesSchema,
+  parsedInput: z
+    .object({
+      uops: ParseUserOpSchema.array(),
+      beneficiary: EthAddressSchema,
+    })
+    .optional(),
+  tokens: TokenSchema.array(),
+  nfts: NftSchema.array(),
+  coins: CoinSchema.array().default([]),
+});
+
+export type transactionType = z.infer<typeof transactionSchema>;

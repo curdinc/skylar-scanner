@@ -70,6 +70,20 @@ export const getUserOpLogFromOpHash = async (
   return parsedUserOpEventLog;
 };
 
+export const parseBundleInput = (input: string) => {
+  const parsedInp: `0x${string}` = `0x${input.slice(10)}`;
+  console.log("parsedInp", parsedInp);
+  const parentTxnInput = decodeAbiParameters(HANDLE_OPS_INPUT, parsedInp);
+
+  if (parentTxnInput.length !== 2) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Unknown Error Occured",
+      cause: "txnInput decoding error",
+    });
+  }
+  return { uops: [...parentTxnInput[0]], beneficiary: parentTxnInput[1] };
+};
 export const getUserOpInfoFromParentHash = async (
   parentHash: EthHashType,
   chainId: EvmChainIdType,
@@ -85,30 +99,11 @@ export const getUserOpInfoFromParentHash = async (
     blockNumber: txnReceipt.blockNumber,
   });
 
-  const parsedInp: `0x${string}` = `0x${txnView.input.slice(10)}`;
-  console.log("parsedInp", parsedInp);
-  const parentTxnInput = decodeAbiParameters(HANDLE_OPS_INPUT, parsedInp);
-  // const [uops, beneficiary] = decodeAbiParameters(
-  //   [
-  //     {
-  //       name: "uops",
-  //       type: "tuple(address, uint256, bytes, bytes, uint256, uint256, uint256, uint256, uint256, bytes, bytes)[]",
-  //     },
-  //     { name: "beneficiary", type: "address" },
-  //   ],
-  //   parsedInp,
-  // );
-  if (parentTxnInput.length !== 2) {
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Unknown Error Occured",
-      cause: "txnInput decoding error",
-    });
-  }
+  const parentTxnInput = parseBundleInput(txnView.input);
 
   // get params
-  const uops = parentTxnInput[0];
-  const beneficiary = parentTxnInput[1];
+  const uops = parentTxnInput.uops;
+  const beneficiary = parentTxnInput.beneficiary;
 
   // find targetUop with unique compound key (sender, nonce)
   const {
@@ -155,7 +150,7 @@ export const getUserOpInfoFromParentHash = async (
 };
 
 export const getTokenAndNFTDataFromBundleHash = async (
-  bundleHash: EthHashType,
+  bundleHash: string,
   chainId: EvmChainIdType,
 ) => {
   const client = getViemClient(chainId);
@@ -209,7 +204,7 @@ export const getTokenAndNFTDataFromBundleHash = async (
           console.log(from, to);
 
           const tokenLog = {
-            amount: fromHex(log.data, "bigint"),
+            amount: fromHex(log.data, "string"),
             contract: log.address,
             decimals: decs,
             from: from,
@@ -231,13 +226,13 @@ export const getTokenAndNFTDataFromBundleHash = async (
             });
           }
           const nftLog: NftType = {
-            amount: 1n,
+            amount: "1",
             contract: log.address,
             from: from,
             imageUrl: "noURLYetWinstonOrHansWillFix",
             name: "noNameYetWinstonWillFix",
             to: to,
-            tokenId: fromHex(tokenId, "bigint"),
+            tokenId: fromHex(tokenId, "string"),
             type: "erc721",
           };
           nftBuf.push(nftLog);
@@ -305,7 +300,14 @@ export const getTokenAndNFTDataFromBundleHash = async (
       }
     }
   }
-
+  if (returnArray.length === 0) {
+    // not a handle ops
+    returnArray.push({
+      userOpHash: "0x",
+      tokens: [...tokenBuf],
+      nfts: [...nftBuf],
+    });
+  }
   return returnArray;
 };
 
