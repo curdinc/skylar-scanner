@@ -9,6 +9,7 @@ import {
 import { getViemClient } from "./client";
 import { ENTRY_POINT_CONTRACT_ADDRESSES } from "./constants";
 import { getUserOp } from "./getUserOp";
+import { isEoaAddressEqual } from "./utils";
 
 export async function parseEvmInput(query: string, chainId: EvmChainIdType) {
   const addressParse = EthAddressSchema.safeParse(query);
@@ -21,7 +22,13 @@ export async function parseEvmInput(query: string, chainId: EvmChainIdType) {
     try {
       const txn = await client.getTransaction({ hash: txnParse.data });
       console.log("txn", txn);
-      if (txn.to && ENTRY_POINT_CONTRACT_ADDRESSES[chainId].includes(txn.to)) {
+      const to = txn.to;
+      if (
+        to &&
+        ENTRY_POINT_CONTRACT_ADDRESSES[chainId].filter((epca) => {
+          return isEoaAddressEqual(epca, to);
+        }).length === 1
+      ) {
         return `/bundle/${chainId}/${txn.hash}`;
       }
       return `/tx/${chainId}/${txn.hash}`;

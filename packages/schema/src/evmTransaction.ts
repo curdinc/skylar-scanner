@@ -76,20 +76,24 @@ export const userOpLogSchema = z.object({
 
 export type userOpLogType = z.infer<typeof userOpLogSchema>;
 
+export const ParseUserOpSchema = z.object({
+  sender: EthAddressSchema,
+  nonce: z.bigint(),
+  initCode: BytesSchema,
+  callData: BytesSchema,
+  callGasLimit: z.bigint(),
+  verificationGasLimit: z.bigint(),
+  preVerificationGas: z.bigint(),
+  maxFeePerGas: z.bigint(),
+  maxPriorityFeePerGas: z.bigint(),
+  paymasterAndData: BytesSchema,
+  signature: BytesSchema,
+});
+
+export type ParseUserOpType = z.infer<typeof ParseUserOpSchema>;
+
 export const userOpSchema = z.object({
-  parsedUserOp: z.object({
-    sender: EthAddressSchema,
-    nonce: z.bigint(),
-    initCode: BytesSchema,
-    callData: BytesSchema,
-    callGasLimit: z.bigint(),
-    verificationGasLimit: z.bigint(),
-    preVerificationGas: z.bigint(),
-    maxFeePerGas: z.bigint(),
-    maxPriorityFeePerGas: z.bigint(),
-    paymasterAndData: BytesSchema,
-    signature: BytesSchema,
-  }),
+  parsedUserOp: ParseUserOpSchema,
   transactionCost: z.string(),
   userOpHash: EthHashSchema,
   entryPointContract: EthAddressSchema,
