@@ -93,6 +93,7 @@ export const ParseUserOpSchema = z.object({
 export type ParseUserOpType = z.infer<typeof ParseUserOpSchema>;
 
 export const userOpSchema = z.object({
+  bundleHash: EthHashSchema,
   parsedUserOp: ParseUserOpSchema,
   transactionCost: z.string(),
   userOpHash: EthHashSchema,

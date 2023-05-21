@@ -105,6 +105,7 @@ export const getUserOpInfoFromParentHash = async (
 
   const gasPrice = actualGasCost / actualGasUsed;
   const targetUop = {
+    bundleHash: parentHash,
     beneficiary: beneficiary,
     timestamp: new Date(Number(block.timestamp * 1000n)),
     transactionCost: formatEther(actualGasCost),
