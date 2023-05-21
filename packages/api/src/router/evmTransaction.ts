@@ -4,6 +4,7 @@ import { EvmParseQuerySchema } from "@skylarScan/schema/src/addressDetails";
 import {
   EthHashSchema,
   EvmTransactionQuerySchema,
+  userOpDetailsSchema,
   userOpInfoPayloadSchema,
   type transactionType,
 } from "@skylarScan/schema/src/evmTransaction";
