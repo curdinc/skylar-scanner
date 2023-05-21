@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { createPublicClient, http, type HttpTransport } from "viem";
+import { createPublicClient, fallback, http, type HttpTransport } from "viem";
 import { goerli, mainnet, polygon, polygonMumbai } from "viem/chains";
 
 import { type EvmChainIdType } from "@skylarScan/schema";
@@ -14,24 +14,31 @@ const chainIdToChain = {
 };
 // generate client for specific chain
 export const getViemClient = (chainId: EvmChainIdType) => {
-  let transport: HttpTransport;
+  let infura: HttpTransport;
+  let alchemy: HttpTransport;
   switch (chainId) {
     case "1": {
-      transport = http(`https://mainnet.infura.io/v3/${env.INFURA_KEY}`);
+      infura = http(`https://mainnet.infura.io/v3/${env.INFURA_KEY}`);
+      alchemy = http(`https://eth-mainnet.g.alchemy.com/v2/${env.ALCHEMY_KEY}`);
       break;
     }
     case "5": {
-      transport = http(`https://goerli.infura.io/v3/${env.INFURA_KEY}`);
+      infura = http(`https://goerli.infura.io/v3/${env.INFURA_KEY}`);
+      alchemy = http(`https://eth-goerli.g.alchemy.com/v2/${env.ALCHEMY_KEY}`);
       break;
     }
     case "137": {
-      transport = http(
-        `https://polygon-mainnet.infura.io/v3/${env.INFURA_KEY}`,
+      infura = http(`https://polygon-mainnet.infura.io/v3/${env.INFURA_KEY}`);
+      alchemy = http(
+        `https://polygon-mainnet.g.alchemy.com/v2/${env.ALCHEMY_KEY}`,
       );
       break;
     }
     case "80001": {
-      transport = http(`https://polygon-mumbai.infura.io/v3/${env.INFURA_KEY}`);
+      infura = http(`https://polygon-mumbai.infura.io/v3/${env.INFURA_KEY}`);
+      alchemy = http(
+        `https://polygon-mumbai.g.alchemy.com/v2/${env.ALCHEMY_KEY}`,
+      );
       break;
     }
     default: {
@@ -45,7 +52,7 @@ export const getViemClient = (chainId: EvmChainIdType) => {
 
   const client = createPublicClient({
     chain: chainIdToChain[chainId],
-    transport: transport,
+    transport: fallback([infura, alchemy]),
   });
   return client;
 };

@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import {
   Center,
   Container,
+  Heading,
   Tab,
   TabList,
   TabPanel,
@@ -16,6 +17,7 @@ import { EthAddressSchema } from "@skylarScan/schema";
 import { api } from "~/utils/api";
 import { CurrentChainIdAtom } from "~/atoms/chain";
 import { NftDisplay } from "./NftDisplay";
+import { TokenDisplay } from "./TokenDisplay";
 import { UserAvatar } from "./UserAvatar";
 
 export const UserWalletPage: React.FC = () => {
@@ -26,14 +28,16 @@ export const UserWalletPage: React.FC = () => {
   const [chainId] = useAtom(CurrentChainIdAtom);
   const {
     data: addressData,
-    isFetching,
+    isLoading,
     error,
   } = api.evmAddress.addressDetails.useQuery(
     {
       address,
+      chainId,
     },
     {
       enabled: address !== "0x",
+      refetchOnWindowFocus: false,
     },
   );
 
@@ -50,24 +54,30 @@ export const UserWalletPage: React.FC = () => {
     <Container maxW="container.lg" mt={10}>
       <UserAvatar
         address={address}
-        ensAvatar={addressData?.addressDetails?.ensAvatar ?? undefined}
-        ensName={addressData?.addressDetails?.ensName}
-        isLoading={isFetching || address === "0x"}
+        ensAvatar={addressData?.ensAvatar ?? undefined}
+        ensName={addressData?.ensName}
+        isLoading={isLoading || address === "0x"}
       />
-      <Tabs isLazy index={activeTab} onChange={handleTabChange}>
-        <TabList>
-          <Tab>NFTs</Tab>
-          <Tab>Tokens</Tab>
-          <Tab>Transactions</Tab>
-        </TabList>
-        <TabPanels>
-          <TabPanel>
-            <NftDisplay address={address} chainId={chainId} />
-          </TabPanel>
-          <TabPanel></TabPanel>
-          <TabPanel></TabPanel>
-        </TabPanels>
-      </Tabs>
+      {addressData?.byteCode ? (
+        <Heading>Transactions</Heading>
+      ) : (
+        <Tabs isLazy index={activeTab} onChange={handleTabChange}>
+          <TabList>
+            <Tab>NFTs</Tab>
+            <Tab>Tokens</Tab>
+            <Tab>Transactions</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel>
+              <NftDisplay address={address} chainId={chainId} />
+            </TabPanel>
+            <TabPanel>
+              <TokenDisplay address={address} chainId={chainId} />
+            </TabPanel>
+            <TabPanel></TabPanel>
+          </TabPanels>
+        </Tabs>
+      )}
     </Container>
   );
 };

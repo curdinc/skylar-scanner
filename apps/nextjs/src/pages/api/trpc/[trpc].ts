@@ -6,6 +6,23 @@ import { appRouter, createTRPCContext } from "@skylarScan/api";
 export default createNextApiHandler({
   router: appRouter,
   createContext: createTRPCContext,
+  responseMeta(opts) {
+    const { errors, type } = opts;
+    // checking that no procedures errored
+    const allOk = errors.length === 0;
+    // checking we're doing a query request
+    const isQuery = type === "query";
+    if (allOk && isQuery) {
+      // cache request for 1 day + revalidate once every second
+      const ONE_DAY_IN_SECONDS = 60 * 60 * 24;
+      return {
+        headers: {
+          "cache-control": `s-maxage=30, stale-while-revalidate=${ONE_DAY_IN_SECONDS}`,
+        },
+      };
+    }
+    return {};
+  },
 });
 
 // If you need to enable cors, you can do so like this:
@@ -21,3 +38,5 @@ export default createNextApiHandler({
 // };
 
 // export default handler;
+
+const test = [];

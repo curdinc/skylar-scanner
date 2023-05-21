@@ -1,13 +1,19 @@
 import { Alchemy, Network } from "alchemy-sdk";
+import { fromHex } from "viem";
 
+import { OneInchSwapSchema } from "@skylarScan/schema";
 import { NftDetailsSchema } from "@skylarScan/schema/src/addressDetails";
 import {
+  EthAddressSchema,
+  EthHashSchema,
   type EthAddressType,
+  type EthHashType,
   type EvmChainIdType,
 } from "@skylarScan/schema/src/evmTransaction";
 
 import { env } from "../../../env.mjs";
 import { getViemClient } from "./client";
+import { swapToUsd } from "./oneInchExchange";
 
 const networkToChainId: Record<EvmChainIdType, Network> = {
   1: Network.ETH_MAINNET,
@@ -26,9 +32,31 @@ export async function getAddressTokens(
   const alchemy = new Alchemy(config);
   const alchemyBalances = await alchemy.core.getTokenBalances(address);
   const balances = alchemyBalances.tokenBalances.map(async (token) => {
-    return token;
+    if (token.tokenBalance) {
+      const tokenAmount = fromHex(
+        EthHashSchema.parse(token.tokenBalance),
+        "bigint",
+      );
+      // don't query if we have less than this ($0.10 usdc)~ to prevent spamming api
+      if (tokenAmount <= 100000n) {
+        return;
+      }
+      try {
+        const swapResult = await swapToUsd({
+          amount: fromHex(EthHashSchema.parse(token.tokenBalance), "bigint"),
+          contractAddress: EthAddressSchema.parse(token.contractAddress),
+          chainId,
+        });
+        return swapResult;
+      } catch (e) {
+        console.error(e);
+        return;
+      }
+    }
   });
-  const tokens = await Promise.all(balances);
+  const tokens = OneInchSwapSchema.array().parse(
+    (await Promise.all(balances)).filter((token) => token !== undefined),
+  );
   return tokens;
 }
 
@@ -71,25 +99,38 @@ export async function getAddressNfts(
   };
 }
 
-export async function getAddressDetails(address: EthAddressType) {
-  const client = getViemClient("1");
+export async function getAddressDetails(
+  address: EthAddressType,
+  chainId: EvmChainIdType,
+) {
+  let byteCode: EthHashType | undefined;
   try {
-    const ensName = await client.getEnsName({
+    const client = getViemClient(chainId);
+    byteCode = await client.getBytecode({
+      address,
+    });
+  } catch (e) {
+    console.error("ERROR: fetching bytecode from viem client: ", e);
+  }
+
+  try {
+    const ensClient = getViemClient("1");
+    const ensName = await ensClient.getEnsName({
       address,
     });
     if (!ensName) {
-      return;
+      return { byteCode };
     }
-    const ensAvatar = await client.getEnsAvatar({
+    const ensAvatar = await ensClient.getEnsAvatar({
       name: ensName,
     });
-    return { ensName, ensAvatar };
+    return { ensName, ensAvatar, byteCode };
   } catch (e) {
     console.error(
       "ERROR: fetching ensName and ensAvatar from viem client: ",
       e,
     );
-    return;
+    return { byteCode };
   }
 }
 

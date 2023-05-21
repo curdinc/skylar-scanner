@@ -8,10 +8,25 @@
 const config = {
   reactStrictMode: true,
   /** Enables hot reloading for local packages without a build step */
-  transpilePackages: ["@skylarScan/api", "@skylarScan/auth", "@skylarScan/db"],
+  transpilePackages: [
+    "@skylarScan/api",
+    "@skylarScan/auth",
+    "@skylarScan/db",
+    "@skylarScan/schema",
+  ],
   /** We already do linting and typechecking as separate tasks in CI */
   eslint: { ignoreDuringBuilds: !!process.env.CI },
   typescript: { ignoreBuildErrors: !!process.env.CI },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "tokens.1inch.io",
+        port: "",
+        pathname: "/**",
+      },
+    ],
+  },
 };
 
 export default config;

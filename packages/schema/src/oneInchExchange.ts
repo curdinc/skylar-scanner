@@ -14,8 +14,8 @@ export type OneInchTokenType = z.infer<typeof oneInchTokenSchema>;
 export const OneInchSwapSchema = z.object({
   fromToken: oneInchTokenSchema,
   toToken: oneInchTokenSchema,
-  fromAmount: z.coerce.bigint(),
-  toAmount: z.coerce.bigint(),
+  toTokenAmount: z.coerce.bigint(),
+  fromTokenAmount: z.coerce.bigint(),
   estimatedGas: z.coerce.bigint(),
 });
 export type OneInchSwapType = z.infer<typeof OneInchSwapSchema>;

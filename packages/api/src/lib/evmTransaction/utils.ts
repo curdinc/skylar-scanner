@@ -154,7 +154,9 @@ export const getTokenAndNFTDataFromBundleHash = async (
   chainId: EvmChainIdType,
 ) => {
   const client = getViemClient(chainId);
-  const txnReceipt = await client.getTransactionReceipt({ hash: bundleHash });
+  const txnReceipt = await client.getTransactionReceipt({
+    hash: bundleHash as any,
+  });
 
   const logs = txnReceipt.logs;
   const returnArray = new Array<{
@@ -252,13 +254,13 @@ export const getTokenAndNFTDataFromBundleHash = async (
         );
 
         const nftLog: NftType = {
-          amount: 1n,
+          amount: 1n.toString(),
           contract: log.address,
           from: from,
           imageUrl: "noURLYetWinstonOrHansWillFix",
           name: "noNameYetWinstonWillFix",
           to: to,
-          tokenId: id,
+          tokenId: id.toString(),
           type: "erc1155",
         };
         nftBuf.push(nftLog);
@@ -285,13 +287,13 @@ export const getTokenAndNFTDataFromBundleHash = async (
             });
           }
           return {
-            amount: amt,
+            amount: amt.toString(),
             contract: log.address,
             from: from,
             imageUrl: "noURLYetWinstonOrHansWillFix",
             name: "noNameYetWinstonWillFix",
             to: to,
-            tokenId: id,
+            tokenId: id.toString(),
             type: "erc1155",
           };
         });

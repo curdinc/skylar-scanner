@@ -1,4 +1,5 @@
 import { TRPCError } from "@trpc/server";
+import { isAddressEqual } from "viem";
 import { normalize } from "viem/ens";
 
 import {
@@ -10,7 +11,6 @@ import {
 import { getViemClient } from "./client";
 import { ENTRY_POINT_CONTRACT_ADDRESSES } from "./constants";
 import { getUserOp } from "./getUserOp";
-import { isEoaAddressEqual } from "./utils";
 
 export const getEnsAddress = async (query: string) => {
   const provider = getViemClient("1");
@@ -38,7 +38,7 @@ export async function parseEvmInput(query: string, chainId: EvmChainIdType) {
       if (
         to &&
         ENTRY_POINT_CONTRACT_ADDRESSES[chainId].filter((epca) => {
-          return isEoaAddressEqual(epca, to);
+          return isAddressEqual(epca, to);
         }).length === 1
       ) {
         return `/bundle/${chainId}/${txn.hash}`;
@@ -67,6 +67,6 @@ export async function parseEvmInput(query: string, chainId: EvmChainIdType) {
   }
   throw new TRPCError({
     code: "BAD_REQUEST",
-    message: "Invalid address or transaction given",
+    message: `Invalid address or transaction given on chain id: ${chainId}`,
   });
 }

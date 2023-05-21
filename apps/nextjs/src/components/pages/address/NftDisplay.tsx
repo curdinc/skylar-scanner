@@ -17,7 +17,7 @@ export const NftDisplay = ({
 }) => {
   const {
     data: nftData,
-    isFetching,
+    isLoading,
     error,
   } = api.evmAddress.nfts.useQuery(
     {
@@ -30,7 +30,7 @@ export const NftDisplay = ({
   );
 
   console.log("nftData", nftData);
-  console.log("isFetching", isFetching);
+  console.log("isLoading", isLoading);
   console.log("error", error);
 
   if (error) {
