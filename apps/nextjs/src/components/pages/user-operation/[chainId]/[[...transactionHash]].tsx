@@ -97,7 +97,7 @@ export const UserOpPage = () => {
           <Heading size="md" fontWeight="semibold">
             Transaction cost
           </Heading>
-          <TransactionCost value={userOpData} size="md" />
+          <TransactionCost data={userOpData} size="md" />
         </Flex>
       </Box>
       {/* Time is not there */}

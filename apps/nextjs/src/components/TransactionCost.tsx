@@ -20,7 +20,7 @@ import { CopyPopover, IconDefault } from "~/components/CopyIcon";
 import convertDisplayAddress from "~/components/displayAddress";
 
 interface props {
-  data: userOpType;
+  data: userOpType | undefined;
   size: string;
 }
 
