@@ -1,4 +1,8 @@
 export {
+  EvmAddressTokensAndNftsQuerySchema,
+  type EvmAddressTokensAndNftsQueryType,
+} from "./src/addressDetails";
+export {
   BlockNonceSchema,
   BlockNumberSchema,
   BlockTagSchema,
@@ -10,3 +14,9 @@ export {
   HexNumberSchema,
   type EvmChainIdType,
 } from "./src/evmTransaction";
+export {
+  OneInchSwapSchema,
+  oneInchTokenSchema,
+  type OneInchSwapType,
+  type OneInchTokenType,
+} from "./src/oneInchExchange";

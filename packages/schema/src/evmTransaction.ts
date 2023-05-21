@@ -42,32 +42,16 @@ export type EvmTransactionClientQueryType = z.infer<
 >;
 
 export const EvmTransactionQuerySchema = z.object({
+  // Open Api must have string type
   txnHash: _EthHashSchema,
   chainId: EvmChainIdSchema,
 });
 export type EvmTransactionQueryType = z.infer<typeof EvmTransactionQuerySchema>;
 
 export type EvmTransaction = Transaction & {
-  nft: NftType[];
-  token: TokenType[];
+  nft?: NftType[];
+  token?: TokenType[];
 };
-
-export const userOpSchema = z.object({
-  sender: EthAddressSchema,
-  nonce: z.bigint(),
-  initCode: BytesSchema,
-  callData: BytesSchema,
-  callGasLimit: z.bigint(),
-  verificationGasLimit: z.bigint(),
-  preVerificationGas: z.bigint(),
-  maxFeePerGas: z.bigint(),
-  maxPriorityFeePerGas: z.bigint(),
-  paymasterAndData: BytesSchema,
-  signature: BytesSchema,
-  beneficiary: EthAddressSchema,
-});
-export type userOpType = z.infer<typeof userOpSchema>;
-
 export const userOpLogSchema = z.object({
   address: EthAddressSchema,
   blockHash: EthHashSchema,
@@ -91,6 +75,37 @@ export const userOpLogSchema = z.object({
 });
 
 export type userOpLogType = z.infer<typeof userOpLogSchema>;
+
+export const userOpSchema = z.object({
+  parsedUserOp: z.object({
+    sender: EthAddressSchema,
+    nonce: z.bigint(),
+    initCode: BytesSchema,
+    callData: BytesSchema,
+    callGasLimit: z.bigint(),
+    verificationGasLimit: z.bigint(),
+    preVerificationGas: z.bigint(),
+    maxFeePerGas: z.bigint(),
+    maxPriorityFeePerGas: z.bigint(),
+    paymasterAndData: BytesSchema,
+    signature: BytesSchema,
+  }),
+  transactionCost: z.string(),
+  userOpHash: EthHashSchema,
+  entryPointContract: EthAddressSchema,
+  timestamp: z.date(),
+  gasData: z.object({
+    gasUsed: z.string(),
+    gasLimit: z.string(),
+    gasPrice: z.string(),
+    baseFeePerGas: z.string(),
+    tipFeePerGas: z.string(),
+    maxFeePerGas: z.string(),
+  }),
+  rawUserOp: BytesSchema,
+  beneficiary: EthAddressSchema,
+});
+export type userOpType = z.infer<typeof userOpSchema>;
 
 export const TokenSchema = z.object({
   type: z.literal("erc20"),

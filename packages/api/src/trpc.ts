@@ -8,7 +8,6 @@
  */
 import { TRPCError, initTRPC } from "@trpc/server";
 import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
-import Cookies from "cookies";
 import superjson from "superjson";
 import { type OpenApiMeta } from "trpc-openapi";
 import { ZodError } from "zod";
@@ -27,7 +26,6 @@ import { prisma } from "@skylarScan/db";
  */
 type CreateContextOptions = {
   session: Session | null;
-  abTest: { landingPage: "simple" | "full" };
 };
 
 /**
@@ -42,7 +40,6 @@ type CreateContextOptions = {
 const createInnerTRPCContext = (opts: CreateContextOptions) => {
   return {
     session: opts.session,
-    abTest: opts.abTest,
     prisma,
   };
 };
@@ -58,16 +55,8 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   // Get the session from the server using the unstable_getServerSession wrapper function
   const session = await getServerSession({ req, res });
 
-  const cookies = new Cookies(req, res, {
-    secure: process.env.NODE_ENV === "production",
-  });
-  const landingPageDisplay = cookies.get("landingPageDisplay");
-
   return createInnerTRPCContext({
     session,
-    abTest: {
-      landingPage: landingPageDisplay as any,
-    },
   });
 };
 

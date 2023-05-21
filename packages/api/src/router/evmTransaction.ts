@@ -48,7 +48,9 @@ export const evmTransactionRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { chainId, txnHash } = input;
       const client = getViemClient(chainId);
-      const txn = await client.getTransaction({ hash: txnHash });
+      const txn = await client.getTransaction({
+        hash: EthHashSchema.parse(txnHash),
+      });
       return txn;
     }),
 

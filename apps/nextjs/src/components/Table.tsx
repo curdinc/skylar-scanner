@@ -1,6 +1,5 @@
 import {
   Table,
-  TableCaption,
   TableContainer,
   Tbody,
   Td,
@@ -8,6 +7,7 @@ import {
   Th,
   Thead,
   Tr,
+  useColorModeValue,
 } from "@chakra-ui/react";
 
 export function DataTable({
@@ -17,14 +17,16 @@ export function DataTable({
   headers: string[];
   data: Array<any>;
 }) {
+  const borderColor = useColorModeValue("gray.200", "darkColor.600");
   return (
     <TableContainer>
       <Table variant="simple">
-        <TableCaption>Imperial to metric conversion factors</TableCaption>
         <Thead>
           <Tr>
             {headers.map((header) => (
-              <Th key={header}>{header}</Th>
+              <Th key={header} borderColor={borderColor} color="gray.300">
+                {header}
+              </Th>
             ))}
           </Tr>
         </Thead>
@@ -32,7 +34,12 @@ export function DataTable({
           {data.map((item, index) => (
             <Tr key={index}>
               {Object.keys(item).map((key) => (
-                <Td key={key}>{item[key]}</Td>
+                <Td key={key} borderColor={borderColor} color="gray.400">
+                  {typeof item[key] === "string" ||
+                  typeof item[key] === "bigint"
+                    ? item[key].toString()
+                    : item[key]}
+                </Td>
               ))}
             </Tr>
           ))}
