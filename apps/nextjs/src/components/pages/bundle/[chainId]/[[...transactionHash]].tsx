@@ -103,7 +103,6 @@ export const BundleTransactionPage = () => {
         newNFTArray.push({
           From: item.from,
           To: item.to,
-          NFT: item.name,
           Amount: item.amount.toString(),
         });
       });
