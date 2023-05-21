@@ -93,8 +93,8 @@ export const evmTransactionRouter = createTRPCRouter({
         gasData: {
           baseFeePerGas: formatGwei(txn.gasPrice ?? 0n),
           gasPrice: formatGwei(txnReceipt.effectiveGasPrice),
-          gasUsed: formatGwei(txnReceipt.gasUsed),
-          gasLimit: formatGwei(txn.gas),
+          gasUsed: txnReceipt.gasUsed.toString(),
+          gasLimit: txn.gas.toString(),
           maxFeePerGas: formatGwei(txn.maxFeePerGas ?? 0n),
           tipFeePerGas: formatGwei(txn.maxPriorityFeePerGas ?? 0n),
           usdcPricePaid: transactionCost.toString(),

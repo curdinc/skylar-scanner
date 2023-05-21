@@ -34,7 +34,7 @@ function TransactionCost({ popoverDetails, copy, size, cost }: props) {
       marginTop="0"
     >
       <Text fontSize={size} color={color}>
-        ${cost}ETH
+        {cost}
       </Text>
 
       <Popover>
