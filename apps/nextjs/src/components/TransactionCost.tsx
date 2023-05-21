@@ -39,7 +39,9 @@ function TransactionCost({ data, size }: props) {
       gap={`var(--chakra-fontSizes-${size})`}
       marginTop="0"
     >
-      <Text fontSize={size}>${valueRounded}ETH</Text>
+      <Text fontSize={size} color="gray.400">
+        ${valueRounded}ETH
+      </Text>
 
       <Popover>
         <PopoverTrigger>

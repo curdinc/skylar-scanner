@@ -7,9 +7,7 @@ import {
   Heading,
   Link,
   Spinner,
-  Stack,
   Text,
-  useColorModeValue,
 } from "@chakra-ui/react";
 
 import {
@@ -20,13 +18,16 @@ import {
 import { api } from "~/utils/api";
 import CopyClipboard from "~/components/CopyClipboard";
 import TransactionCost from "~/components/TransactionCost";
-import dummyNFT from "~/NFTdummy.json";
-import { DataTable } from "../../../Table";
+import { AccordianTable } from "../../../Table";
 
 type UserOpDataDisplayType = {
   Name: string;
   Type: string;
   Data: string | JSX.Element | bigint;
+};
+type moreInfoType = {
+  Name: string;
+  Data: string;
 };
 export const UserOpPage = () => {
   const {
@@ -38,9 +39,11 @@ export const UserOpPage = () => {
     undefined,
   );
   const [userOpArray, setUserOpArray] = useState<UserOpDataDisplayType[]>([]);
+  const [moreInfoArray, setMoreInfoArray] = useState<moreInfoType[]>([]);
+  const [timeDiff, setTimeDiff] = useState("");
   const isLoading = !userOpData && !error;
   const router = useRouter();
-  const bgcolor = useColorModeValue("gray.100", "darkColor.500");
+  const curDate = new Date().getTime();
 
   useEffect(() => {
     if (!chainId || !transactionHash) {
@@ -114,6 +117,48 @@ export const UserOpPage = () => {
         });
       });
       setUserOpArray(userDataArray);
+
+      setMoreInfoArray([
+        {
+          Name: "beneficiary",
+          Data: userOpData.beneficiary,
+        },
+        {
+          Name: "Entry Point Contract",
+          Data: userOpData.entryPointContract,
+        },
+        {
+          Name: "Gas Data",
+          Data:
+            "Base fee of " +
+            Number(userOpData.gasData.baseFeePerGas).toFixed(2).toString() +
+            " Gwei with " +
+            Number(userOpData.gasData.tipFeePerGas).toFixed(2).toString() +
+            " Gwei of tip, capped at " +
+            Number(userOpData.gasData.maxFeePerGas).toFixed(2).toString(),
+        },
+      ]);
+
+      const ms = curDate - userOpData.timestamp.getTime();
+      let timeDiff = 0;
+      let unit = "";
+      if (ms >= 2592000000) {
+        timeDiff = Math.floor(ms / 2592000000);
+        unit = " month";
+      } else if (ms >= 604800000) {
+        timeDiff = Math.floor(ms / 604800000);
+        unit = " week";
+      } else if (ms >= 86400000) {
+        timeDiff = Math.floor(ms / 86400000);
+        unit = " day";
+      } else if (ms >= 3600000) {
+        timeDiff = Math.floor(ms / 3600000);
+        unit = " hour";
+      } else {
+        timeDiff = Math.floor(ms / 3600000);
+        unit = " minute";
+      }
+      // setTimeDiff();
     }
   }, [userOpData]);
 
@@ -133,7 +178,7 @@ export const UserOpPage = () => {
     <Box
       width="100%"
       padding="10"
-      sx={{ display: "flex", flexDirection: "column", gap: "8" }}
+      sx={{ display: "flex", flexDirection: "column", gap: "6" }}
     >
       <CopyClipboard
         value={userOpData?.userOpHash ? userOpData?.userOpHash : ""}
@@ -141,7 +186,13 @@ export const UserOpPage = () => {
         header
       />
 
-      <Box width={"100%"}>
+      {userOpData && (
+        <Text marginTop={"-4"}>
+          UserOp submitted {} minutes ago by SCW address
+        </Text>
+      )}
+
+      <Box width={"100%"} maxWidth={"lg"}>
         <Flex justifyContent="space-between" alignItems="center">
           <Heading size="md" fontWeight="semibold">
             Bundle Hash
@@ -159,12 +210,41 @@ export const UserOpPage = () => {
       {/* Time is not there */}
 
       {/* User OP  */}
-      <Box rounded="md" bg={bgcolor}>
-        <Heading padding="5" paddingBottom="2" size="lg">
-          User Op
-        </Heading>
-        <DataTable headers={["Name", "Type", "Data"]} data={userOpArray} />
-      </Box>
+      <AccordianTable
+        headers={["Name", "Type", "Data"]}
+        data={userOpArray}
+        title="User op"
+      />
+
+      {/* More info */}
+      <AccordianTable headers={[]} title="More info" data={moreInfoArray} />
+      {/* <Box rounded="lg" bg={bgcolor}>
+        <Accordion defaultIndex={[0]} rounded="md" allowMultiple>
+          <AccordionItem>
+            <h1>
+              <AccordionButton>
+                <Box
+                  as="span"
+                  flex="1"
+                  textAlign="left"
+                  fontSize="3xl"
+                  fontWeight="bold"
+                  padding="5"
+                >
+                  User Op
+                </Box>
+                <AccordionIcon />
+              </AccordionButton>
+            </h1>
+            <AccordionPanel pb={4}>
+              <DataTable
+                headers={["Name", "Type", "Data"]}
+                data={userOpArray}
+              />
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
+      </Box> */}
 
       <div></div>
     </Box>

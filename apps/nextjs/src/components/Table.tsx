@@ -1,4 +1,10 @@
 import {
+  Accordion,
+  AccordionButton,
+  AccordionIcon,
+  AccordionItem,
+  AccordionPanel,
+  Box,
   Table,
   TableContainer,
   Tbody,
@@ -21,15 +27,17 @@ export function DataTable({
   return (
     <TableContainer>
       <Table variant="simple">
-        <Thead>
-          <Tr>
-            {headers.map((header) => (
-              <Th key={header} borderColor={borderColor} color="gray.300">
-                {header}
-              </Th>
-            ))}
-          </Tr>
-        </Thead>
+        {headers.length !== 0 && (
+          <Thead>
+            <Tr>
+              {headers.map((header) => (
+                <Th key={header} borderColor={borderColor} color="gray.300">
+                  {header}
+                </Th>
+              ))}
+            </Tr>
+          </Thead>
+        )}
         <Tbody>
           {data.map((item, index) => (
             <Tr key={index}>
@@ -49,5 +57,43 @@ export function DataTable({
         </Tfoot>
       </Table>
     </TableContainer>
+  );
+}
+
+export function AccordianTable({
+  headers,
+  data,
+  title,
+}: {
+  headers: string[];
+  data: Array<any>;
+  title: string;
+}) {
+  const bgcolor = useColorModeValue("gray.100", "darkColor.500");
+  return (
+    <Box rounded="md" bg={bgcolor}>
+      <Accordion defaultIndex={[0]} rounded="md" allowMultiple>
+        <AccordionItem border="none">
+          <h1>
+            <AccordionButton>
+              <Box
+                as="span"
+                flex="1"
+                textAlign="left"
+                fontSize="2xl"
+                fontWeight="bold"
+                padding="2"
+              >
+                {title}
+              </Box>
+              <AccordionIcon />
+            </AccordionButton>
+          </h1>
+          <AccordionPanel pb={4}>
+            <DataTable headers={headers} data={data} />
+          </AccordionPanel>
+        </AccordionItem>
+      </Accordion>
+    </Box>
   );
 }

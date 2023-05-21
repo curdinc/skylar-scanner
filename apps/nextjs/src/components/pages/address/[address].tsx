@@ -14,7 +14,6 @@ import { useAtom } from "jotai";
 import { EthAddressSchema } from "@skylarScan/schema";
 
 import { api } from "~/utils/api";
-import SortableTable from "~/components/SortableTable";
 import { CurrentChainIdAtom } from "~/atoms/chain";
 import { NftDisplay } from "./NftDisplay";
 import { UserAvatar } from "./UserAvatar";
@@ -65,10 +64,8 @@ export const UserWalletPage: React.FC = () => {
           <TabPanel>
             <NftDisplay address={address} chainId={chainId} />
           </TabPanel>
-          <TabPanel>
-            <SortableTable />
-          </TabPanel>
-          <TabPanel>Tab3</TabPanel>
+          <TabPanel></TabPanel>
+          <TabPanel></TabPanel>
         </TabPanels>
       </Tabs>
     </Container>
