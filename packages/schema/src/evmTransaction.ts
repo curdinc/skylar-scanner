@@ -165,6 +165,8 @@ export const userOpDetailsSchema = z.object({
 export type userOpDetailsType = z.infer<typeof userOpDetailsSchema>;
 
 export const transactionSchema = z.object({
+  to: EthAddressSchema.optional(),
+  from: EthAddressSchema,
   nonce: z.number(),
   blockNumber: z.bigint(),
   txnHash: z.string(),

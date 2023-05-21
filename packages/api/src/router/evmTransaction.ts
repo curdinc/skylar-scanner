@@ -15,7 +15,7 @@ import { getUserOp } from "../lib/evmTransaction/getUserOp";
 import { parseEvmInput } from "../lib/evmTransaction/parseEvmInput";
 import {
   getTokenAndNFTDataFromBundleHash,
-  parseBundleInput
+  parseBundleInput,
 } from "../lib/evmTransaction/utils";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
@@ -75,8 +75,10 @@ export const evmTransactionRouter = createTRPCRouter({
         txnHash,
         chainId,
       );
-
+      console.log("tokenAndNFTData", tokenAndNFTData);
       const transactionObject: transactionType = {
+        to: txnReceipt.to ?? undefined,
+        from: txn.from,
         blockNumber: txn.blockNumber ?? 0n,
         gasData: {
           baseFeePerGas: formatGwei(txn.gasPrice ?? 0n),
