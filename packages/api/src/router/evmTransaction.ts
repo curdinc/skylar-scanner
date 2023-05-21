@@ -1,4 +1,9 @@
-import { EvmTransactionQuerySchema } from "@skylarScan/schema/src/evmTransaction";
+import { z } from "zod";
+
+import {
+  EthHashSchema,
+  EvmTransactionQuerySchema,
+} from "@skylarScan/schema/src/evmTransaction";
 
 import { getViemClient } from "../lib/evmTransaction/client";
 import { getUserOp } from "../lib/evmTransaction/getUserOp";
@@ -9,6 +14,7 @@ export const evmTransactionRouter = createTRPCRouter({
   userOpInfo: publicProcedure
     .meta({ openapi: { method: "GET", path: "/userOpInfo" } })
     .input(EvmTransactionQuerySchema)
+    .output(z.any())
     .query(async ({ input }) => {
       const { chainId, txnHash: searchQuery } = input;
       return getUserOp(chainId, searchQuery);
@@ -18,7 +24,9 @@ export const evmTransactionRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { chainId, txnHash } = input;
       const client = getViemClient(chainId);
-      const txn = await client.getTransaction({ hash: txnHash });
+      const txn = await client.getTransaction({
+        hash: EthHashSchema.parse(txnHash),
+      });
       return txn;
     }),
 

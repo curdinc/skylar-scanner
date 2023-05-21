@@ -1,12 +1,12 @@
 import { TRPCError } from "@trpc/server";
-import { decodeAbiParameters } from "viem";
+import { decodeAbiParameters, formatEther, formatGwei } from "viem";
 
 import {
   userOpLogSchema,
   userOpSchema,
-  type EthAddressType,
   type EthHashType,
   type EvmChainIdType,
+  type userOpLogType,
 } from "@skylarScan/schema/src/evmTransaction";
 
 import { getViemClient } from "./client";
@@ -68,8 +68,7 @@ export const getUserOpLogFromOpHash = async (
 export const getUserOpInfoFromParentHash = async (
   parentHash: EthHashType,
   chainId: EvmChainIdType,
-  sender: EthAddressType,
-  nonce: bigint,
+  userOpLog: userOpLogType,
   moreInfo = false,
 ) => {
   // get the viem client
@@ -77,6 +76,10 @@ export const getUserOpInfoFromParentHash = async (
 
   // get the tranaction details
   const txnView = await client.getTransaction({ hash: parentHash });
+  const txnReceipt = await client.getTransactionReceipt({ hash: parentHash });
+  const block = await client.getBlock({
+    blockNumber: txnReceipt.blockNumber,
+  });
 
   const parsedInp: `0x${string}` = `0x${txnView.input.slice(10)}`;
 
@@ -95,9 +98,33 @@ export const getUserOpInfoFromParentHash = async (
   const beneficiary = parentTxnInput[1];
 
   // find targetUop with unique compound key (sender, nonce)
+  const {
+    args: { actualGasCost, sender, nonce, userOpHash, actualGasUsed },
+  } = userOpLog;
   const uop = uops.find((uop) => uop.sender === sender && uop.nonce === nonce);
 
-  const targetUop = { beneficiary: beneficiary, ...uop };
+  const gasPrice = actualGasCost / actualGasUsed;
+  const targetUop = {
+    beneficiary: beneficiary,
+    timestamp: new Date(Number(block.timestamp * 1000n)),
+    transactionCost: formatEther(actualGasCost),
+    entryPointContract: txnReceipt.to,
+    userOpHash,
+    parsedUserOp: uop,
+    rawUserOp: parsedInp,
+    gasData: {
+      gasUsed: actualGasUsed.toString(),
+      gasLimit: (
+        (uop?.callGasLimit || 0n) +
+          (uop?.verificationGasLimit || 0n) +
+          (uop?.preVerificationGas || 0n) || actualGasUsed
+      ).toString(),
+      gasPrice: formatGwei(gasPrice),
+      baseFeePerGas: formatGwei(gasPrice - (uop?.maxPriorityFeePerGas || 0n)),
+      tipFeePerGas: formatGwei(uop?.maxPriorityFeePerGas || 0n),
+      maxFeePerGas: formatGwei(uop?.maxFeePerGas || 0n),
+    },
+  };
 
   const zodParsedTargetUop = userOpSchema.safeParse(targetUop);
 

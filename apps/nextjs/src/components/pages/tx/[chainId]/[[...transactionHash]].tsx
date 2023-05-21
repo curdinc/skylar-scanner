@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 import { Center, Spinner } from "@chakra-ui/react";
 
 import {
-  EvmTransaction,
   EvmTransactionClientQuerySchema,
+  type EvmTransaction,
 } from "@skylarScan/schema/src/evmTransaction";
 
 import { api } from "~/utils/api";

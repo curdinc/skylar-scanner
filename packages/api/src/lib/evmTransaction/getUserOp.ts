@@ -14,8 +14,7 @@ export async function getUserOp(chainId: EvmChainIdType, searchQuery: string) {
   const uopInfo = await getUserOpInfoFromParentHash(
     parentHash,
     chainId,
-    parsedUserOpEventLog.args.sender,
-    parsedUserOpEventLog.args.nonce,
+    parsedUserOpEventLog,
     true,
   );
 
