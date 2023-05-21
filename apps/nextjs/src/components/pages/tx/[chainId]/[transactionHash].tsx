@@ -8,9 +8,11 @@ import {
 } from "@skylarScan/schema/src/evmTransaction";
 
 import { api } from "~/utils/api";
+import bigintToString from "~/utils/bigintToString";
 import { formatCurrency } from "~/utils/currency";
 import { formatDateSince } from "~/utils/date";
 import CopyClipboard from "~/components/CopyClipboard";
+import { AccordianTable } from "~/components/Table";
 import TransactionCost from "~/components/TransactionCost";
 import { CurrentChainIdAtom } from "~/atoms/chain";
 
@@ -91,6 +93,67 @@ export const TransactionPage = () => {
           )}
         </Flex>
       </Stack>
+
+      {/* NFTs */}
+      {transactionInfo?.nfts && transactionInfo?.nfts.length && (
+        <AccordianTable
+          headers={["From", "To", "NFT", "Amount"]}
+          title={`NFTs [ ${transactionInfo.nfts.length} ]`}
+          data={transactionInfo.nfts.map((item) => {
+            return {
+              From: item.from,
+              To: item.to,
+              NFT: item.name,
+              Amount: item.amount.toString(),
+            };
+          })}
+        />
+      )}
+
+      {/* Tokens */}
+      {transactionInfo?.tokens && transactionInfo?.tokens.length && (
+        <AccordianTable
+          headers={["From", "To", "Amount"]}
+          title={`Tokens [ ${transactionInfo.tokens.length} ]`}
+          data={transactionInfo.tokens.map((item) => {
+            return {
+              From: item.from,
+              To: item.to,
+              Amount: bigintToString(item.amount, item.decimals),
+            };
+          })}
+        />
+      )}
+
+      {/* More info */}
+      <AccordianTable
+        headers={[]}
+        title="More info"
+        data={[
+          { Name: "Block Number", Data: transactionInfo.blockNumber },
+          {
+            Name: "Nonce",
+            Data: transactionInfo.nonce,
+          },
+          {
+            Name: "Gas Data / gas",
+            Data:
+              "Base fee of " +
+              Number(transactionInfo.gasData.baseFeePerGas)
+                .toFixed(2)
+                .toString() +
+              " Gwei with " +
+              Number(transactionInfo.gasData.tipFeePerGas)
+                .toFixed(2)
+                .toString() +
+              " Gwei of tip, capped at " +
+              Number(transactionInfo.gasData.maxFeePerGas)
+                .toFixed(2)
+                .toString() +
+              "Gwei ",
+          },
+        ]}
+      />
     </Stack>
   );
 };
