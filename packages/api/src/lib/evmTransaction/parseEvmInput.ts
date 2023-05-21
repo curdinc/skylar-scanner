@@ -26,8 +26,6 @@ export const getEnsAddress = async (query: string) => {
 };
 
 export async function parseEvmInput(query: string, chainId: EvmChainIdType) {
-  console.log("parseInput");
-
   const txnParse = EthHashSchema.safeParse(query);
   if (txnParse.success) {
     const client = getViemClient(chainId);
@@ -47,10 +45,8 @@ export async function parseEvmInput(query: string, chainId: EvmChainIdType) {
     } catch (e) {
       console.error("Error getting transaction", e);
       try {
-        console.log("getUop");
-
         const userOp = await getUserOp(chainId, txnParse.data, false);
-        console.log("userOp", userOp);
+
         if (userOp) {
           return `/user-operation/${chainId}/${txnParse.data}`;
         }

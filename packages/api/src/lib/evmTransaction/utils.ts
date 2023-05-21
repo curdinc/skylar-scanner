@@ -1,7 +1,11 @@
 import { TRPCError } from "@trpc/server";
+import { ethers } from "ethers";
 import { decodeAbiParameters, formatEther, formatGwei, fromHex } from "viem";
+import { z } from "zod";
 
 import {
+  BytesSchema,
+  EthAddressSchema,
   userOpLogSchema,
   userOpSchema,
   type EthHashType,
@@ -14,12 +18,14 @@ import {
 import { getViemClient } from "./client";
 import {
   ENTRY_POINT_CONTRACT_ADDRESSES,
-  HANDLE_OPS_INPUT,
   PARSER_ABI,
   SIGNATURES,
   USER_OPERATION_EVENT,
 } from "./constants";
 
+const bigNumberToBigInt = (bigNum: ethers.BigNumber): bigint => {
+  return BigInt(bigNum.toString());
+};
 // params should already should be validated before called so we just crash
 export const getUserOpLogFromOpHash = async (
   opHash: string,
@@ -71,18 +77,40 @@ export const getUserOpLogFromOpHash = async (
 };
 
 export const parseBundleInput = (input: string) => {
-  const parsedInp: `0x${string}` = `0x${input.slice(10)}`;
-  console.log("parsedInp", parsedInp);
-  const parentTxnInput = decodeAbiParameters(HANDLE_OPS_INPUT, parsedInp);
-
-  if (parentTxnInput.length !== 2) {
+  let ethersParsedInput: ethers.utils.Result;
+  try {
+    ethersParsedInput = new ethers.utils.Interface([
+      "function handleOps(tuple(address sender, uint256 nonce, bytes initCode, bytes callData, uint256 callGasLimit, uint256 verificationGasLimit, uint256 preVerificationGas, uint256 maxFeePerGas, uint256 maxPriorityFeePerGas, bytes paymasterAndData, bytes signature)[] ops, address beneficiary)",
+    ]).decodeFunctionData("handleOps", input);
+  } catch (e) {
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
-      message: "Unknown Error Occured",
-      cause: "txnInput decoding error",
+      message: "Invalid epc func sign.",
+      cause: e,
     });
   }
-  return { uops: [...parentTxnInput[0]], beneficiary: parentTxnInput[1] };
+  console.log("ethersParsedInput", ethersParsedInput);
+  const data = {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    uops: ethersParsedInput[0].map((op) => {
+      const parsedOp = {
+        sender: EthAddressSchema.parse(op[0]),
+        nonce: z.bigint().parse(bigNumberToBigInt(op[1])),
+        initCode: BytesSchema.parse(op[2]),
+        callData: BytesSchema.parse(op[3]),
+        callGasLimit: z.bigint().parse(bigNumberToBigInt(op[4])),
+        verificationGasLimit: z.bigint().parse(bigNumberToBigInt(op[5])),
+        preVerificationGas: z.bigint().parse(bigNumberToBigInt(op[6])),
+        maxFeePerGas: z.bigint().parse(bigNumberToBigInt(op[7])),
+        maxPriorityFeePerGas: z.bigint().parse(bigNumberToBigInt(op[8])),
+        paymasterAndData: BytesSchema.parse(op[9]),
+        signature: BytesSchema.parse(op[10]),
+      };
+      return parsedOp;
+    }),
+    beneficiary: EthAddressSchema.parse(ethersParsedInput[1]),
+  };
+  return data;
 };
 export const getUserOpInfoFromParentHash = async (
   parentHash: EthHashType,
@@ -146,6 +174,7 @@ export const getUserOpInfoFromParentHash = async (
       cause: zodParsedTargetUop.error,
     });
   }
+  console.log("zodParsedTargetUop.data", zodParsedTargetUop.data);
   return zodParsedTargetUop.data;
 };
 

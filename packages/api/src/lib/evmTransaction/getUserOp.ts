@@ -12,8 +12,6 @@ export async function getUserOp(
   searchQuery: string,
   moreInfo = false,
 ) {
-  console.log("startGetUOP");
-
   const parsedUserOpEventLog = await getUserOpLogFromOpHash(
     searchQuery,
     chainId,
@@ -27,6 +25,7 @@ export async function getUserOp(
     chainId,
     parsedUserOpEventLog,
   );
+  console.log("uopInfo");
 
   if (moreInfo) {
     const tokenAndNFTData = await getTokenAndNFTDataFromBundleHash(

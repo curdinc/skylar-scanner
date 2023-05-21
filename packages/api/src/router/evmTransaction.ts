@@ -4,7 +4,6 @@ import { EvmParseQuerySchema } from "@skylarScan/schema/src/addressDetails";
 import {
   EthHashSchema,
   EvmTransactionQuerySchema,
-  userOpDetailsSchema,
   userOpInfoPayloadSchema,
   type transactionType,
 } from "@skylarScan/schema/src/evmTransaction";
@@ -15,7 +14,7 @@ import { getUserOp } from "../lib/evmTransaction/getUserOp";
 import { parseEvmInput } from "../lib/evmTransaction/parseEvmInput";
 import {
   getTokenAndNFTDataFromBundleHash,
-  parseBundleInput
+  parseBundleInput,
 } from "../lib/evmTransaction/utils";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
@@ -26,12 +25,7 @@ export const evmTransactionRouter = createTRPCRouter({
     .query(async ({ input }) => {
       const { chainId, txnHash: searchQuery } = input;
       const res = await getUserOp(chainId, searchQuery, true);
-      console.log("res", res);
-      const zodParsed = userOpDetailsSchema.safeParse(res);
-      if (!zodParsed.success) {
-        console.error(JSON.stringify(zodParsed.error.format(), null, 2));
-      }
-
+      console.log(res, "res");
       return res;
     }),
 
