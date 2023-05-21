@@ -23,7 +23,6 @@ type infoArrayType = {
 type nftType = {
   From: string;
   To: string;
-  NFT: string;
   Amount: string;
 };
 
