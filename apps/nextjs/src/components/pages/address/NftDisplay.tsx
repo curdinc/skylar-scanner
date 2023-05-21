@@ -57,7 +57,11 @@ export const NftDisplay = ({
   return (
     <Grid templateColumns="repeat(5, 1fr)" gap={4}>
       {filteredData?.map((nft) => (
-        <Card imageUrl={nft.imageUrl} name={nft.name} price={nft.price} />
+        <Card
+          imageUrl={nft?.imageUrl || ""}
+          name={nft?.name || ""}
+          price={nft?.price?.toString() || ""}
+        />
       ))}
     </Grid>
   );

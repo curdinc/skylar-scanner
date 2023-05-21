@@ -1,4 +1,4 @@
-import { formatGwei } from "viem";
+import { formatGwei, isAddressEqual } from "viem";
 
 import { EvmParseQuerySchema } from "@skylarScan/schema/src/addressDetails";
 import {
@@ -15,8 +15,7 @@ import { getUserOp } from "../lib/evmTransaction/getUserOp";
 import { parseEvmInput } from "../lib/evmTransaction/parseEvmInput";
 import {
   getTokenAndNFTDataFromBundleHash,
-  isEoaAddressEqual,
-  parseBundleInput,
+  parseBundleInput
 } from "../lib/evmTransaction/utils";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
@@ -99,7 +98,7 @@ export const evmTransactionRouter = createTRPCRouter({
       if (
         to &&
         ENTRY_POINT_CONTRACT_ADDRESSES[chainId].filter((epca) => {
-          return isEoaAddressEqual(epca, to);
+          return isAddressEqual(epca, to);
         }).length === 1
       ) {
         transactionObject.parsedInput = parseBundleInput(txn.input);

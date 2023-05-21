@@ -5,9 +5,8 @@ interface ICardProps {
   imageUrl: string;
   name: string;
   price: string;
-  imageHeight: string;
-  imageWidth: string;
-  imageFit: string;
+  imageHeight?: string;
+  imageWidth?: string;
 }
 
 const Card: React.FC<ICardProps> = ({
@@ -16,17 +15,16 @@ const Card: React.FC<ICardProps> = ({
   price,
   imageHeight = "200px",
   imageWidth = "auto",
-  imageFit = "contain",
 }) => {
   return (
     <Box borderWidth="1px" borderRadius="md" overflow="hidden" boxShadow="sm">
       <Center>
         <Image
           src={imageUrl}
-          alt="NFT"
+          alt={`${name} NFT`}
           height={imageHeight}
           width={imageWidth}
-          objectFit={imageFit}
+          objectFit={"contain"}
         />
       </Center>
       <Box p={4}>

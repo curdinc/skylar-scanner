@@ -37,9 +37,7 @@ export async function getUserOp(
     console.log("tokenAndNFTData", tokenAndNFTData);
 
     const targetData = tokenAndNFTData.find((payload) => {
-      if (isEoaAddressEqual(payload.userOpHash, searchQuery)) {
-        return true;
-      }
+      return isEoaAddressEqual(payload.userOpHash, searchQuery);
     });
     return { ...uopInfo, ...targetData };
   }
