@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 import {
   Center,
   Container,
-  Heading,
   Tab,
   TabList,
   TabPanel,
@@ -58,26 +57,23 @@ export const UserWalletPage: React.FC = () => {
         ensName={addressData?.ensName}
         isLoading={isLoading || address === "0x"}
       />
-      {addressData?.byteCode ? (
-        <Heading>Transactions</Heading>
-      ) : (
-        <Tabs isLazy index={activeTab} onChange={handleTabChange}>
-          <TabList>
-            <Tab>NFTs</Tab>
-            <Tab>Tokens</Tab>
-            <Tab>Transactions</Tab>
-          </TabList>
-          <TabPanels>
-            <TabPanel>
-              <NftDisplay address={address} chainId={chainId} />
-            </TabPanel>
-            <TabPanel>
-              <TokenDisplay address={address} chainId={chainId} />
-            </TabPanel>
-            <TabPanel></TabPanel>
-          </TabPanels>
-        </Tabs>
-      )}
+
+      <Tabs isLazy index={activeTab} onChange={handleTabChange}>
+        <TabList>
+          <Tab>NFTs</Tab>
+          <Tab>Tokens</Tab>
+          {/* <Tab>Transactions</Tab> */}
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            <NftDisplay address={address} chainId={chainId} />
+          </TabPanel>
+          <TabPanel>
+            <TokenDisplay address={address} chainId={chainId} />
+          </TabPanel>
+          <TabPanel></TabPanel>
+        </TabPanels>
+      </Tabs>
     </Container>
   );
 };
