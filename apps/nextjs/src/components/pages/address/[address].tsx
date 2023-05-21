@@ -47,8 +47,6 @@ export const UserWalletPage: React.FC = () => {
     return <Center flexGrow={1}>{error.message}</Center>;
   }
 
-  console.log('isFetching || address === "0x"', isFetching);
-  console.log('address === "0x"', address === "0x");
   return (
     <Container maxW="container.lg" mt={10}>
       <UserAvatar
