@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Center, Spinner } from "@chakra-ui/react";
+import {
+  Box,
+  Center,
+  Flex,
+  Heading,
+  Spinner,
+  Stack,
+  Text,
+  useColorModeValue,
+} from "@chakra-ui/react";
 
 import {
   EvmTransactionClientQuerySchema,
@@ -9,6 +18,8 @@ import {
 
 import { api } from "~/utils/api";
 import CopyClipboard from "~/components/CopyClipboard";
+import TransactionCost from "~/components/TransactionCost";
+import dummyNFT from "~/NFTdummy.json";
 import { DataTable } from "../../../Table";
 
 export const UserOpPage = () => {
@@ -21,6 +32,7 @@ export const UserOpPage = () => {
     undefined,
   );
   const isLoading = !userOpData && !error;
+  const bgcolor = useColorModeValue("gray.100", "gray.700");
 
   useEffect(() => {
     if (!chainId || !transactionHash) {
@@ -58,21 +70,46 @@ export const UserOpPage = () => {
       </Center>
     );
   }
+  console.log(transactionHash);
+  console.log(userOpData);
+  // userOpData.userOp
 
   if (error) {
     return <Center flexGrow={1}>{error}</Center>;
   }
 
   return (
-    <div>
-      <DataTable
-        headers={["test", "Test2"]}
-        data={[
-          { name: "Maanav", age: "3" },
-          { name: "Hans", age: "1" },
-        ]}
+    <Box width="100%" padding="10">
+      <CopyClipboard
+        value={transactionHash && transactionHash[0] ? transactionHash[0] : ""}
+        size={"2xl"}
+        header
       />
-      <CopyClipboard value={"0x1231hj23j3j3jk3awwdaawd23123"} size="6xl" />
-    </div>
+
+      <Box width={"100%"}>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Heading size="md" fontWeight="semibold">
+            Bundle Hash
+          </Heading>
+          <CopyClipboard value={"0x1231hj23j3j3jk3awwdaawd23123"} size="md" />
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Heading size="md" fontWeight="semibold">
+            Transaction cost
+          </Heading>
+          <TransactionCost value={userOpData} size="md" />
+        </Flex>
+      </Box>
+      {/* Time is not there */}
+
+      {/* User OP  */}
+      <Box rounded="md" bg={bgcolor}>
+        <Heading padding="5">User Op</Heading>
+        <DataTable headers={["To", "From", "NFT", "Amount"]} data={dummyNFT} />
+      </Box>
+      <DataTable headers={["To", "From", "NFT", "Amount"]} data={dummyNFT} />
+      <DataTable headers={["To", "From", "NFT", "Amount"]} data={dummyNFT} />
+      <div></div>
+    </Box>
   );
 };
