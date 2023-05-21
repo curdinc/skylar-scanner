@@ -1,6 +1,21 @@
 import { z } from "zod";
 
-import { EthHashSchema, EvmChainIdSchema } from "./evmTransaction";
+import {
+  EthAddressSchema,
+  EthHashSchema,
+  EvmChainIdSchema,
+} from "./evmTransaction";
+
+export const parseQuerySchema = z.union([
+  EthHashSchema,
+  EthAddressSchema,
+  z.string().endsWith(".eth"),
+]);
+
+export const EvmParseQuerySchema = z.object({
+  query: parseQuerySchema,
+  chainId: EvmChainIdSchema,
+});
 
 export const EvmAddressTokensAndNftsQuerySchema = z.object({
   address: EthHashSchema,

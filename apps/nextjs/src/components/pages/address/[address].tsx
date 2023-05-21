@@ -1,10 +1,8 @@
 import React, { useState } from "react";
 import {
-  Box,
   Container,
   Flex,
   Grid,
-  HStack,
   Image,
   Tab,
   TabList,

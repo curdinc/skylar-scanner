@@ -1,10 +1,17 @@
 import { TRPCError } from "@trpc/server";
 import { createPublicClient, http, type HttpTransport } from "viem";
+import { goerli, mainnet, polygon, polygonMumbai } from "viem/chains";
 
 import { type EvmChainIdType } from "@skylarScan/schema";
 
 import { env } from "../../../env.mjs";
 
+const chainIdToChain = {
+  1: mainnet,
+  5: goerli,
+  137: polygon,
+  80001: polygonMumbai,
+};
 // generate client for specific chain
 export const getViemClient = (chainId: EvmChainIdType) => {
   let transport: HttpTransport;
@@ -35,7 +42,9 @@ export const getViemClient = (chainId: EvmChainIdType) => {
       });
     }
   }
+
   const client = createPublicClient({
+    chain: chainIdToChain[chainId],
     transport: transport,
   });
   return client;
