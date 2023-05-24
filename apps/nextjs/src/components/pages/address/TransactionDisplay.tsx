@@ -94,7 +94,7 @@ export const TransactionDisplay = ({
     TableBody = (
       <>
         <Tr>
-          <Td colSpan={2} textAlign={"center"} w="full">
+          <Td colSpan={4} textAlign={"center"} w="full">
             No transactions found
           </Td>
         </Tr>
