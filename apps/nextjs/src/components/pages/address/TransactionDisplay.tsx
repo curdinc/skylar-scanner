@@ -104,7 +104,7 @@ export const TransactionDisplay = ({
   if (isLoading) {
     TableBody = (
       <>
-        {Array.from(Array(3).keys()).map((i) => {
+        {Array.from(Array(5).keys()).map((i) => {
           return (
             <Tr key={i}>
               <Td>
