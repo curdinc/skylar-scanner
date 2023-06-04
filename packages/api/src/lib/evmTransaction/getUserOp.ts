@@ -1,4 +1,4 @@
-import { type EvmChainIdType } from "@skylarScan/schema";
+import { type EvmChainIdType } from "@skylar-scanner/schema";
 
 import {
   getTokenAndNFTDataFromBundleHash,

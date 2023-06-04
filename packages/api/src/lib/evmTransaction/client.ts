@@ -2,7 +2,7 @@ import { TRPCError } from "@trpc/server";
 import { createPublicClient, fallback, http, type HttpTransport } from "viem";
 import { goerli, mainnet, polygon, polygonMumbai } from "viem/chains";
 
-import { type EvmChainIdType } from "@skylarScan/schema";
+import { type EvmChainIdType } from "@skylar-scanner/schema";
 
 import { env } from "../../../env.mjs";
 

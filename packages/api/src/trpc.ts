@@ -12,8 +12,8 @@ import superjson from "superjson";
 import { type OpenApiMeta } from "trpc-openapi";
 import { ZodError } from "zod";
 
-import { getServerSession, type Session } from "@skylarScan/auth";
-import { prisma } from "@skylarScan/db";
+import { getServerSession, type Session } from "@skylar-scanner/auth";
+import { prisma } from "@skylar-scanner/db";
 
 /**
  * 1. CONTEXT

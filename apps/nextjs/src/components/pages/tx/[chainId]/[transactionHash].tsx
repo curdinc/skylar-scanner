@@ -15,7 +15,7 @@ import { Priority, useKBar } from "kbar";
 import {
   EthHashSchema,
   EvmChainIdSchema,
-} from "@skylarScan/schema/src/evmTransaction";
+} from "@skylar-scanner/schema/src/evmTransaction";
 
 import { api } from "~/utils/api";
 import bigintToString from "~/utils/bigintToString";

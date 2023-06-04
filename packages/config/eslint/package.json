@@ -1,5 +1,5 @@
 {
-  "name": "@skylarScan/eslint-config",
+  "name": "@skylar-scanner/eslint-config",
   "version": "0.1.0",
   "main": "index.js",
   "license": "MIT",

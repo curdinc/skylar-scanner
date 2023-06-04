@@ -20,7 +20,7 @@
   "dependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^3.7.2",
     "@manypkg/cli": "^0.20.0",
-    "@skylarScan/eslint-config": "^0.1.0",
+    "@skylar-scanner/eslint-config": "^0.1.0",
     "@types/prettier": "^2.7.2",
     "eslint": "^8.39.0",
     "kbar": "0.1.0-beta.40",

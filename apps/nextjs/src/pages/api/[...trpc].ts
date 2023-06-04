@@ -2,7 +2,7 @@ import { type NextApiRequest, type NextApiResponse } from "next";
 import cors from "nextjs-cors";
 import { createOpenApiNextHandler } from "trpc-openapi";
 
-import { createTRPCContext, openApiRouter } from "@skylarScan/api";
+import { createTRPCContext, openApiRouter } from "@skylar-scanner/api";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   // Setup CORS

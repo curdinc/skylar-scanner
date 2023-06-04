@@ -6,7 +6,7 @@ import { formatUnits } from "viem";
 import {
   EvmTransactionClientQuerySchema,
   type transactionType,
-} from "@skylarScan/schema/src/evmTransaction";
+} from "@skylar-scanner/schema/src/evmTransaction";
 
 import { api } from "~/utils/api";
 import { formatCurrency } from "~/utils/currency";

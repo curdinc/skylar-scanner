@@ -1,11 +1,11 @@
 import { TRPCError } from "@trpc/server";
 import { isAddressEqual } from "viem";
 
-import { OneInchSwapSchema } from "@skylarScan/schema";
+import { OneInchSwapSchema } from "@skylar-scanner/schema";
 import {
   type EthAddressType,
   type EvmChainIdType,
-} from "@skylarScan/schema/src/evmTransaction";
+} from "@skylar-scanner/schema/src/evmTransaction";
 
 export async function swapTokens({
   fromAddress,

@@ -1,6 +1,6 @@
 import { createNextApiHandler } from "@trpc/server/adapters/next";
 
-import { appRouter, createTRPCContext } from "@skylarScan/api";
+import { appRouter, createTRPCContext } from "@skylar-scanner/api";
 
 // export API handler
 export default createNextApiHandler({

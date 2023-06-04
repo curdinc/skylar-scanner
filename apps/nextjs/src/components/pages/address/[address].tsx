@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { useAtom } from "jotai";
 
-import { EthAddressSchema } from "@skylarScan/schema";
+import { EthAddressSchema } from "@skylar-scanner/schema";
 
 import { api } from "~/utils/api";
 import { CurrentChainIdAtom } from "~/atoms/chain";

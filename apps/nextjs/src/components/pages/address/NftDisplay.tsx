@@ -3,7 +3,7 @@ import { Center, Grid } from "@chakra-ui/react";
 import {
   type EthAddressType,
   type EvmChainIdType,
-} from "@skylarScan/schema/src/evmTransaction";
+} from "@skylar-scanner/schema/src/evmTransaction";
 
 import { api } from "~/utils/api";
 import Card from "~/components/Card";

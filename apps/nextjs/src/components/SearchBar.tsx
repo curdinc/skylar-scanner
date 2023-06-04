@@ -23,7 +23,7 @@ import {
 } from "kbar";
 import { Moon, Search, SunMedium as Sun } from "lucide-react";
 
-import { parseQuerySchema } from "@skylarScan/schema/src/addressDetails";
+import { parseQuerySchema } from "@skylar-scanner/schema/src/addressDetails";
 
 import { Ethereum, Polygon } from "~/assets/chainIcons";
 import { CurrentChainIdAtom } from "~/atoms/chain";

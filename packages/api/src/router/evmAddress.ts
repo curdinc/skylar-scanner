@@ -1,4 +1,4 @@
-import { EvmAddressTokensAndNftsQuerySchema } from "@skylarScan/schema";
+import { EvmAddressTokensAndNftsQuerySchema } from "@skylar-scanner/schema";
 
 import {
   getAddressDetails,

@@ -1,4 +1,8 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
 
 importers:
 
@@ -10,7 +14,7 @@ importers:
       '@manypkg/cli':
         specifier: ^0.20.0
         version: 0.20.0
-      '@skylarScan/eslint-config':
+      '@skylar-scanner/eslint-config':
         specifier: ^0.1.0
         version: link:packages/config/eslint
       '@types/prettier':
@@ -116,13 +120,13 @@ importers:
       '@expo/config-plugins':
         specifier: ^6.0.1
         version: 6.0.1
-      '@skylarScan/api':
+      '@skylar-scanner/api':
         specifier: '*'
         version: link:../../packages/api
-      '@skylarScan/eslint-config':
+      '@skylar-scanner/eslint-config':
         specifier: '*'
         version: link:../../packages/config/eslint
-      '@skylarScan/tailwind-config':
+      '@skylar-scanner/tailwind-config':
         specifier: '*'
         version: link:../../packages/config/tailwind
       '@types/babel__core':
@@ -173,16 +177,16 @@ importers:
       '@next/font':
         specifier: ^13.3.4
         version: 13.3.4
-      '@skylarScan/api':
+      '@skylar-scanner/api':
         specifier: ^0.1.0
         version: link:../../packages/api
-      '@skylarScan/db':
+      '@skylar-scanner/db':
         specifier: ^0.1.0
         version: link:../../packages/db
-      '@skylarScan/schema':
+      '@skylar-scanner/schema':
         specifier: ^0.1.0
         version: link:../../packages/schema
-      '@skylarScan/tailwind-config':
+      '@skylar-scanner/tailwind-config':
         specifier: ^0.1.0
         version: link:../../packages/config/tailwind
       '@stripe/react-stripe-js':
@@ -252,7 +256,7 @@ importers:
         specifier: ^3.21.4
         version: 3.21.4
     devDependencies:
-      '@skylarScan/eslint-config':
+      '@skylar-scanner/eslint-config':
         specifier: ^0.1.0
         version: link:../../packages/config/eslint
       '@types/cookies':
@@ -288,13 +292,13 @@ importers:
 
   packages/api:
     dependencies:
-      '@skylarScan/auth':
+      '@skylar-scanner/auth':
         specifier: ^0.1.0
         version: link:../auth
-      '@skylarScan/db':
+      '@skylar-scanner/db':
         specifier: ^0.1.0
         version: link:../db
-      '@skylarScan/schema':
+      '@skylar-scanner/schema':
         specifier: ^0.1.0
         version: link:../schema
       '@t3-oss/env-nextjs':
@@ -328,7 +332,7 @@ importers:
         specifier: ^3.21.4
         version: 3.21.4
     devDependencies:
-      '@skylarScan/eslint-config':
+      '@skylar-scanner/eslint-config':
         specifier: ^0.1.0
         version: link:../config/eslint
       eslint:
@@ -343,7 +347,7 @@ importers:
       '@next-auth/prisma-adapter':
         specifier: ^1.0.6
         version: 1.0.6(@prisma/client@4.13.0)(next-auth@4.22.1)
-      '@skylarScan/db':
+      '@skylar-scanner/db':
         specifier: ^0.1.0
         version: link:../db
       next:
@@ -359,7 +363,7 @@ importers:
         specifier: 18.2.0
         version: 18.2.0(react@18.2.0)
     devDependencies:
-      '@skylarScan/eslint-config':
+      '@skylar-scanner/eslint-config':
         specifier: ^0.1.0
         version: link:../config/eslint
       eslint:
@@ -434,7 +438,7 @@ importers:
         specifier: ^3.21.4
         version: 3.21.4
     devDependencies:
-      '@skylarScan/eslint-config':
+      '@skylar-scanner/eslint-config':
         specifier: ^0.1.0
         version: link:../config/eslint
       eslint:

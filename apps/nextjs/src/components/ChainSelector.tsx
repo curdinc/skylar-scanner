@@ -10,7 +10,7 @@ import {
 import { useAtom } from "jotai";
 import { goerli, mainnet, polygon, polygonMumbai } from "viem/chains";
 
-import { EvmChainIdSchema } from "@skylarScan/schema";
+import { EvmChainIdSchema } from "@skylar-scanner/schema";
 
 import { Ethereum, Polygon } from "~/assets/chainIcons";
 import { CurrentChainIdAtom } from "~/atoms/chain";

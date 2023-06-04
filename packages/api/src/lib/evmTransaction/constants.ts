@@ -1,7 +1,7 @@
 import { parseAbi, parseAbiItem, parseAbiParameters } from "viem";
 
-import { type EvmChainIdType } from "@skylarScan/schema";
-import { type EthHashType } from "@skylarScan/schema/src/evmTransaction";
+import { type EvmChainIdType } from "@skylar-scanner/schema";
+import { type EthHashType } from "@skylar-scanner/schema/src/evmTransaction";
 
 // constants
 export const ENTRYPOINT_CONTRACT_ADDRESS =

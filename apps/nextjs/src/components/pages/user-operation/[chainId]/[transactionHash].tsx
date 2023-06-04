@@ -17,7 +17,7 @@ import { formatUnits } from "viem";
 import {
   EthHashSchema,
   EvmChainIdSchema,
-} from "@skylarScan/schema/src/evmTransaction";
+} from "@skylar-scanner/schema/src/evmTransaction";
 
 import { api } from "~/utils/api";
 import { formatEvmAddress } from "~/utils/blockchain";

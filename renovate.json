@@ -3,7 +3,7 @@
   "extends": ["config:base"],
   "packageRules": [
     {
-      "matchPackagePatterns": ["^@skylarScan/"],
+      "matchPackagePatterns": ["^@skylar-scanner/"],
       "enabled": false
     }
   ],

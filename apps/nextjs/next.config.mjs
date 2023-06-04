@@ -9,10 +9,10 @@ const config = {
   reactStrictMode: true,
   /** Enables hot reloading for local packages without a build step */
   transpilePackages: [
-    "@skylarScan/api",
-    "@skylarScan/auth",
-    "@skylarScan/db",
-    "@skylarScan/schema",
+    "@skylar-scanner/api",
+    "@skylar-scanner/auth",
+    "@skylar-scanner/db",
+    "@skylar-scanner/schema",
   ],
   /** We already do linting and typechecking as separate tasks in CI */
   eslint: { ignoreDuringBuilds: !!process.env.CI },

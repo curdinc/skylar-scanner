@@ -1,5 +1,5 @@
 {
-  "name": "@skylarScan/nextjs",
+  "name": "@skylar-scanner/nextjs",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -20,10 +20,10 @@
     "@emotion/react": "^11.10.8",
     "@emotion/styled": "^11.10.8",
     "@next/font": "^13.3.4",
-    "@skylarScan/api": "^0.1.0",
-    "@skylarScan/db": "^0.1.0",
-    "@skylarScan/schema": "^0.1.0",
-    "@skylarScan/tailwind-config": "^0.1.0",
+    "@skylar-scanner/api": "^0.1.0",
+    "@skylar-scanner/db": "^0.1.0",
+    "@skylar-scanner/schema": "^0.1.0",
+    "@skylar-scanner/tailwind-config": "^0.1.0",
     "@stripe/react-stripe-js": "^2.1.0",
     "@stripe/stripe-js": "^1.52.1",
     "@t3-oss/env-nextjs": "^0.2.2",
@@ -48,7 +48,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@skylarScan/eslint-config": "^0.1.0",
+    "@skylar-scanner/eslint-config": "^0.1.0",
     "@types/cookies": "^0.7.7",
     "@types/node": "^18.16.3",
     "@types/react": "^18.2.0",

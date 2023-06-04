@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { Center, Spinner, Text } from "@chakra-ui/react";
 import { useAtom } from "jotai";
 
-import { EvmParseQuerySchema } from "@skylarScan/schema/src/addressDetails";
+import { EvmParseQuerySchema } from "@skylar-scanner/schema/src/addressDetails";
 
 import { api } from "~/utils/api";
 import { CurrentChainIdAtom } from "~/atoms/chain";

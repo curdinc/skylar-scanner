@@ -16,8 +16,8 @@ import {
 } from "@chakra-ui/react";
 import { formatUnits } from "viem";
 
-import { type EvmChainIdType } from "@skylarScan/schema";
-import { type EthAddressType } from "@skylarScan/schema/src/evmTransaction";
+import { type EvmChainIdType } from "@skylar-scanner/schema";
+import { type EthAddressType } from "@skylar-scanner/schema/src/evmTransaction";
 
 import { api } from "~/utils/api";
 import { formatCurrency } from "~/utils/currency";

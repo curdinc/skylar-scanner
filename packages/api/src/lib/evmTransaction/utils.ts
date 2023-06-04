@@ -14,7 +14,7 @@ import {
   type NftType,
   type TokenType,
   type userOpLogType,
-} from "@skylarScan/schema/src/evmTransaction";
+} from "@skylar-scanner/schema/src/evmTransaction";
 
 import { getViemClient } from "./client";
 import {

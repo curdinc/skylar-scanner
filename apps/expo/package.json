@@ -1,5 +1,5 @@
 {
-  "name": "@skylarScan/expo",
+  "name": "@skylar-scanner/expo",
   "version": "0.1.0",
   "main": "index.tsx",
   "scripts": {
@@ -32,9 +32,9 @@
     "superjson": "1.9.1"
   },
   "devDependencies": {
-    "@skylarScan/api": "*",
-    "@skylarScan/eslint-config": "*",
-    "@skylarScan/tailwind-config": "*",
+    "@skylar-scanner/api": "*",
+    "@skylar-scanner/eslint-config": "*",
+    "@skylar-scanner/tailwind-config": "*",
     "@babel/core": "^7.21.4",
     "@babel/preset-env": "^7.21.4",
     "@babel/runtime": "^7.21.0",

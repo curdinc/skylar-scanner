@@ -2,7 +2,7 @@
 
 // import { type Config } from "tailwindcss";
 
-// import baseConfig from "@skylarScan/tailwind-config";
+// import baseConfig from "@skylar-scanner/tailwind-config";
 
 // export default {
 //   presets: [baseConfig],

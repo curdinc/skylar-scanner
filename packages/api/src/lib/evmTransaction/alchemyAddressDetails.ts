@@ -1,15 +1,15 @@
 import { Alchemy, Network } from "alchemy-sdk";
 import { fromHex } from "viem";
 
-import { OneInchSwapSchema } from "@skylarScan/schema";
-import { NftDetailsSchema } from "@skylarScan/schema/src/addressDetails";
+import { OneInchSwapSchema } from "@skylar-scanner/schema";
+import { NftDetailsSchema } from "@skylar-scanner/schema/src/addressDetails";
 import {
   EthAddressSchema,
   EthHashSchema,
   type EthAddressType,
   type EthHashType,
   type EvmChainIdType,
-} from "@skylarScan/schema/src/evmTransaction";
+} from "@skylar-scanner/schema/src/evmTransaction";
 
 import { env } from "../../../env.mjs";
 import { getViemClient } from "./client";

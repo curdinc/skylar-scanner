@@ -6,7 +6,7 @@ import {
   EthAddressSchema,
   EthHashSchema,
   type EvmChainIdType,
-} from "@skylarScan/schema";
+} from "@skylar-scanner/schema";
 
 import { getViemClient } from "./client";
 import { ENTRY_POINT_CONTRACT_ADDRESSES } from "./constants";

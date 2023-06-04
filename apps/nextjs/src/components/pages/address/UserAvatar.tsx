@@ -1,6 +1,6 @@
 import { Avatar, Flex, Heading, Skeleton } from "@chakra-ui/react";
 
-import { type EthAddressType } from "@skylarScan/schema/src/evmTransaction";
+import { type EthAddressType } from "@skylar-scanner/schema/src/evmTransaction";
 
 import { formatEvmAddress } from "~/utils/blockchain";
 

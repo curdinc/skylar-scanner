@@ -1,5 +1,5 @@
 {
-  "name": "@skylarScan/api",
+  "name": "@skylar-scanner/api",
   "version": "0.1.0",
   "main": "./index.ts",
   "types": "./index.ts",
@@ -11,9 +11,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@skylarScan/auth": "^0.1.0",
-    "@skylarScan/db": "^0.1.0",
-    "@skylarScan/schema": "^0.1.0",
+    "@skylar-scanner/auth": "^0.1.0",
+    "@skylar-scanner/db": "^0.1.0",
+    "@skylar-scanner/schema": "^0.1.0",
     "@t3-oss/env-nextjs": "^0.2.2",
     "@trpc/client": "^10.23.0",
     "@trpc/server": "^10.23.0",
@@ -26,7 +26,7 @@
     "zod": "^3.21.4"
   },
   "devDependencies": {
-    "@skylarScan/eslint-config": "^0.1.0",
+    "@skylar-scanner/eslint-config": "^0.1.0",
     "eslint": "^8.39.0",
     "typescript": "^5.0.4"
   }

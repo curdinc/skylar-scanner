@@ -1,7 +1,7 @@
 import { formatGwei, formatUnits, isAddressEqual } from "viem";
 import { z } from "zod";
 
-import { EvmParseQuerySchema } from "@skylarScan/schema/src/addressDetails";
+import { EvmParseQuerySchema } from "@skylar-scanner/schema/src/addressDetails";
 import {
   EthAddressSchema,
   EthHashSchema,
@@ -9,7 +9,7 @@ import {
   EvmTransactionQuerySchema,
   userOpInfoPayloadSchema,
   type transactionType,
-} from "@skylarScan/schema/src/evmTransaction";
+} from "@skylar-scanner/schema/src/evmTransaction";
 
 import { getViemClient } from "../lib/evmTransaction/client";
 import { ENTRY_POINT_CONTRACT_ADDRESSES } from "../lib/evmTransaction/constants";
