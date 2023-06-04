@@ -37,9 +37,17 @@ export const evmTransactionRouter = createTRPCRouter({
     .input(z.object({ sender: EthAddressSchema, chainId: EvmChainIdSchema }))
     .query(async ({ input }) => {
       const { chainId, sender } = input;
-      const res = await getUserOpLogsFromSender(sender, chainId);
-      console.log(res, "res");
-      return res;
+      const client = getViemClient(chainId);
+      const code = await client.getBytecode({ address: sender });
+      if (code !== undefined) {
+        console.log("should be here");
+        // we have an scw
+        const res = await getUserOpLogsFromSender(sender, chainId);
+        console.log(res, "res");
+        return res;
+      }
+      // we have an eoa
+      return [];
     }),
   // testing
   transactionRecognizedInfo: publicProcedure

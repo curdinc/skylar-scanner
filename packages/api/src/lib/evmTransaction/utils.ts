@@ -1,8 +1,15 @@
 import { TRPCError } from "@trpc/server";
 import { ethers } from "ethers";
-import { decodeAbiParameters, formatGwei, formatUnits, fromHex } from "viem";
+import {
+  decodeAbiParameters,
+  formatGwei,
+  formatUnits,
+  fromHex,
+  parseAbi,
+} from "viem";
 import { z } from "zod";
 
+import { type TransactionsDetailsType } from "@skylarScan/schema/src/addressDetails";
 import {
   BytesSchema,
   EthAddressSchema,
@@ -34,20 +41,45 @@ export const getUserOpLogsFromSender = async (
   chainId: EvmChainIdType,
 ) => {
   const client = getViemClient(chainId);
-  const currBlock = client.getBlockNumber();
+  const currBlock = await client.getBlockNumber();
   const entryPointContract = ENTRY_POINT_CONTRACT_ADDRESSES[chainId][0];
 
-  const filter = await client.createEventFilter({
+  const filter = await client.createContractEventFilter({
     address: entryPointContract,
-    event: USER_OPERATION_EVENT,
-    args: [null, sender],
+    abi: parseAbi([
+      "event UserOperationEvent(bytes32 indexed userOpHash, address indexed sender, address indexed paymaster, uint256 nonce, bool success, uint256 actualGasCost, uint256 actualGasUsed)",
+    ]),
+    eventName: "UserOperationEvent",
     fromBlock: currBlock - 100000n,
+    args: {
+      sender: sender,
+    },
   });
+  const logs = await client.getFilterLogs({ filter });
 
-  console.log("filter", filter);
-  return filter;
+  //TODO:
+  console.log("logs", logs);
+
+  const parsedLogs: TransactionsDetailsType[] = await Promise.all(
+    logs.map(async (log) => {
+      const block = await client.getBlock({
+        blockNumber: log.blockNumber ?? 0n,
+      });
+
+      const transactionDetails: TransactionsDetailsType = {
+        userOp: log.args.userOpHash ?? "0x",
+        bundleHash: log.transactionHash ?? "0x",
+        time: new Date(Number(block.timestamp * 1000n)),
+        gasUsdcPricePaid: "10",
+      };
+
+      return transactionDetails;
+    }),
+  );
+
+  console.log("parsedLogs", parsedLogs);
+  return parsedLogs;
 };
-
 // params should already should be validated before called so we just crash
 export const getUserOpLogFromOpHash = async (
   opHash: string,

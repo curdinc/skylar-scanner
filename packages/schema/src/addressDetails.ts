@@ -45,3 +45,12 @@ export const NftDetailsSchema = z.object({
     })
     .array(),
 });
+
+export const TransactionsDetailsSchema = z.object({
+  userOp: EthHashSchema,
+  bundleHash: EthAddressSchema,
+  time: z.date(),
+  gasUsdcPricePaid: z.string(),
+});
+
+export type TransactionsDetailsType = z.infer<typeof TransactionsDetailsSchema>;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Box, Center, Flex, Heading, Spinner, Text } from "@chakra-ui/react";
+import { Center, Flex, Heading, Spinner, Stack, Text } from "@chakra-ui/react";
 import { formatUnits } from "viem";
 
 import {
@@ -139,24 +139,22 @@ export const BundleTransactionPage = () => {
   console.log(userOpData);
 
   return (
-    <Box
-      width="100vw"
-      padding="10"
-      sx={{ display: "flex", flexDirection: "column", gap: "6" }}
-    >
-      <CopyClipboard
-        value={userOpData?.txnHash ? userOpData?.txnHash : ""}
-        size={"2xl"}
-        header
-      />
+    <Stack width="100vw" padding="10" sx={{ gap: "8" }}>
+      <Stack spacing="1">
+        <CopyClipboard
+          value={userOpData?.txnHash ? userOpData?.txnHash : ""}
+          size={"2xl"}
+          header
+        />
 
-      {userOpData && (
-        <Text marginTop={"-4"}>
-          UserOp submitted {timeDiff} ago by bundler address
-        </Text>
-      )}
+        {userOpData && (
+          <Text marginTop={"-4"}>
+            UserOp submitted {timeDiff} ago by bundler address
+          </Text>
+        )}
+      </Stack>
 
-      <Box width={"100%"} maxWidth={"lg"}>
+      <Stack width={"100%"} spacing="6" maxWidth={"xl"}>
         <Flex justifyContent="space-between" alignItems="center">
           <Heading size="md" fontWeight="semibold">
             Entry point contract
@@ -185,7 +183,7 @@ export const BundleTransactionPage = () => {
             />
           )}
         </Flex>
-      </Box>
+      </Stack>
 
       {/* More info */}
       <AccordianTable headers={[]} title="More info" data={moreInfoArray} />
@@ -215,6 +213,6 @@ export const BundleTransactionPage = () => {
           data={tokenArray}
         />
       )}
-    </Box>
+    </Stack>
   );
 };

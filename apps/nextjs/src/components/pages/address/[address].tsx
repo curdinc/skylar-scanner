@@ -17,6 +17,7 @@ import { api } from "~/utils/api";
 import { CurrentChainIdAtom } from "~/atoms/chain";
 import { NftDisplay } from "./NftDisplay";
 import { TokenDisplay } from "./TokenDisplay";
+import { TransactionDisplay } from "./TransactionDisplay";
 import { UserAvatar } from "./UserAvatar";
 
 export const UserWalletPage: React.FC = () => {
@@ -62,7 +63,7 @@ export const UserWalletPage: React.FC = () => {
         <TabList>
           <Tab>NFTs</Tab>
           <Tab>Tokens</Tab>
-          {/* <Tab>Transactions</Tab> */}
+          <Tab>Transactions</Tab>
         </TabList>
         <TabPanels>
           <TabPanel>
@@ -71,7 +72,9 @@ export const UserWalletPage: React.FC = () => {
           <TabPanel>
             <TokenDisplay address={address} chainId={chainId} />
           </TabPanel>
-          <TabPanel></TabPanel>
+          <TabPanel>
+            <TransactionDisplay address={address} chainId={chainId} />
+          </TabPanel>
         </TabPanels>
       </Tabs>
     </Container>
